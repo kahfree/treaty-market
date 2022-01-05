@@ -1,0 +1,3 @@
+this is a test text file to separate my 
+code igniter project from the regular source
+code.
