@@ -33,9 +33,9 @@ class Database extends Config
     public $default = [
         'DSN'      => '',
         'hostname' => 'localhost',
-        'username' => '',
-        'password' => '',
-        'database' => '',
+        'username' => 'treaty',
+        'password' => 'h0TeOJ5ZeRbNRX4h',
+        'database' => 'treatymarket',
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,
