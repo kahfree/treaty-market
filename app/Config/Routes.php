@@ -34,6 +34,14 @@ $routes->setAutoRoute(true);
 $routes->get('/', 'GeneralUserController::index');
 $routes->match(['get','post'],'register', 'GeneralUserController::register');
 $routes->match(['get','post'],'login', 'GeneralUserController::login');
+$routes->match(['get','post'],'logout', 'GeneralUserController::logout');
+$routes->get('/browseproducts/(:any)', 'GeneralUserController::browseproducts/$1');
+$routes->get('/browseproducts', 'GeneralUserController::browseproducts');
+
+$routes->get('/Customer', 'CustomerController::index');
+
+
+$routes->get('/Administrator', 'AdministratorController::index');
 
 /*
  * --------------------------------------------------------------------
