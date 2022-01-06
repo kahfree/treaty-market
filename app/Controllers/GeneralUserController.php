@@ -26,8 +26,8 @@ class GeneralUserController extends BaseController
 			$rules = [
 				'firstname' => 'required|min_length[3]|max_length[20]',
 				'lastname' => 'required|min_length[3]|max_length[20]',
-				'email' => 'required|min_length[6]|max_length[50]|valid_email|is_unique[client.Email]',
-				'pass_word' => 'required|min_length[8]|max_length[255]',
+				'email' => 'required|min_length[6]|max_length[50]|valid_email|is_unique[customers.email]',
+				'password' => 'required|min_length[8]|max_length[255]',
 				'password_confirm' => 'matches[pass_word]',
 			];
 			//Check if validation specifications are met
@@ -43,7 +43,7 @@ class GeneralUserController extends BaseController
 					'FirstName' => $this->request->getVar('firstname'),
 					'LastName' => $this->request->getVar('lastname'),
 					'Email' => $this->request->getVar('email'),
-					'ClientPassword' => hash('ripemd160',$this->request->getVar('pass_word')),
+					'ClientPassword' => hash('ripemd160',$this->request->getVar('password')),
 				];
 				//Add new client to database
 				$model->save($newData);
