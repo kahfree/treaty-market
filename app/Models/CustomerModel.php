@@ -43,7 +43,7 @@ class CustomerModel extends Model {
         if($customer){
             print_r($customer);
             print_r(hash('md5',$password));
-        if($email === $customer->email && hash('ripemd160',$password) === $customer->password)
+        if($email === $customer->email && hash('md5',$password) === $customer->password)
             return true;
 
         }

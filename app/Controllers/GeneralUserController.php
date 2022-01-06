@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Controllers;
+use App\Models\CustomerModel;
+use App\Models\AdministratorModel;
+use App\Models\ProductModel;
 
 class GeneralUserController extends BaseController
 {
@@ -24,12 +27,24 @@ class GeneralUserController extends BaseController
 		{
 			//Specify validation rules
 			$rules = [
-				'firstname' => 'required|min_length[3]|max_length[20]',
-				'lastname' => 'required|min_length[3]|max_length[20]',
+				'companyName' => 'required|min_length[3]|max_length[50]',
+				'firstname' => 'required|min_length[3]|max_length[50]',
+				'lastname' => 'required|min_length[3]|max_length[50]',
+				'phoneNumber' => 'required|regex_match[/^[0-9]{10}$/]',
+				'address1' => 'required|min_length[3]|max_length[50]',
+				'address2' => 'max_length[50]',
+				'city' => 'required',
+				'postalCode' => 'max_length[15]',
+				'country' => 'required|min_length[3]|max_length[50]',
+				'address1' => 'required|min_length[3]|max_length[50]',
 				'email' => 'required|min_length[6]|max_length[50]|valid_email|is_unique[customers.email]',
-				'password' => 'required|min_length[8]|max_length[255]',
-				'password_confirm' => 'matches[pass_word]',
+				'password' => 'required|min_length[3]|max_length[255]',
+				'password_confirm' => 'matches[password]',
 			];
+
+			if($this->request->getVar('creditLimit')) {
+				$rules['creditLimit'] = 'regex_match[/^\d+$/]';
+			}
 			//Check if validation specifications are met
 			if(! $this->validate($rules)) {
 				//if not, get the rules vialated and add them to the data array
@@ -37,21 +52,30 @@ class GeneralUserController extends BaseController
 			}
 			else{
 				//if rules are met, create user and store in database
-				$model = new ClientModel();
-				//Create new client row stored as elements in array
+				$model = new CustomerModel();
+				//Create new customer$customer row stored as elements in array
 				$newData = [
-					'FirstName' => $this->request->getVar('firstname'),
-					'LastName' => $this->request->getVar('lastname'),
-					'Email' => $this->request->getVar('email'),
-					'ClientPassword' => hash('ripemd160',$this->request->getVar('password')),
+					'customerName' => $this->request->getVar('companyName'),
+					'contactFirstName' => $this->request->getVar('firstname'),
+					'contactLastName' => $this->request->getVar('lastname'),
+					'phone' => $this->request->getVar('phoneNumber'),
+					'addressLine1' => $this->request->getVar('address1'),
+					'addressLine2' => $this->request->getVar('address2'),
+					'city' => $this->request->getVar('city'),
+					'postalCode' => $this->request->getVar('postalCode'),
+					'country' => $this->request->getVar('country'),
+					'creditLimit' => $this->request->getVar('creditLimit'),
+					'email' => $this->request->getVar('email'),
+					'password' => hash('md5',$this->request->getVar('password')),
 				];
-				//Add new client to database
+				//Add new customer$customer to database
 				$model->save($newData);
 				$session = session();
 				//Set flash data to let user know registration was successful
 				$session->setFlashdata('success','successful registration');
 				//Redirect them to login now that registration was successful
-				return redirect()->to('/login');
+				print_r($newData);
+				//return redirect()->to('/login');
 			}
 		}
 		//If the post method wasn't used, reload the page.
@@ -66,8 +90,8 @@ class GeneralUserController extends BaseController
 		$session = session();
 		//Object of each usertype is created
 		//This is to check what type the user loggin in is
-		$ClientModel = new ClientModel();
-		$moderatormodel = new ModeratorModel();
+		$customerModel = new CustomerModel();
+		$administratorModel = new AdministratorModel();
 
 		//Check if post method was used
 		if($this->request->getMethod() == 'post')
@@ -79,47 +103,48 @@ class GeneralUserController extends BaseController
 
 
 			//Check what type the user is
-			$client = $ClientModel->getClientByEmail($baseuserEmail);
-			$moderator = $moderatormodel->getModerator($baseuserEmail);
+			$customer = $customerModel->getCustomerByEmail($baseuserEmail);
+			$adminstrator = $administratorModel->getAdministratorByEmail($baseuserEmail);
 
-			//If the a client is found using the user's login details, sign them in as a user
-			if($ClientModel->validateClientLogin($baseuserEmail,$baseuserPassword)){
+			//If the a customer$customer is found using the user's login details, sign them in as a user
+			if($customerModel->validateCustomerLogin($baseuserEmail,$baseuserPassword)){
 				
-				$session->setFlashdata('Client','email and password matches user in database');
+				$session->setFlashdata('Customer','email and password matches customer in database');
 			
-				//Create all the client's session data
+				//Create all the customer's session data
 				$ses_data = [
-					'clientID' => $client->ClientID,
-					'firstname' => $client->FirstName,
-					'lastname' => $client->LastName,
-					'email' => $client->Email,
+					'customerNumber' => $customer->customerNumber,
+					'firstname' => $customer->contactFirstName,
+					'lastname' => $customer->contactLastName,
+					'email' => $customer->email,
 					'loggedIn' => TRUE,
-					'userType' => 'Client'
+					'userType' => 'Customer'
 				];
-				//Set the client's session data
+
+				//Set the customer's session data
 				$session->set($ses_data);
 
 			}
-			//If a moderator is found using the user's login details, sign them in as a moderator
-			else if($moderatormodel->validateModeratorLogin($baseuserEmail,$baseuserPassword)){
+			//If a adminstrator is found using the user's login details, sign them in as a adminstrator
+			else if($administratorModel->validateAdminLogin($baseuserEmail,$baseuserPassword)){
 				$session = session();
-				$session->setFlashdata('Moderator','email and password matches moderator in database');
+				$session->setFlashdata('Administrator','email and password matches adminstrator in database');
 			
-				//Create all the session data for moderator
+				//Create all the session data for adminstrator
 				$ses_data = [
-					'moderatorID' => $moderator->ModeratorID,
-					'firstname' => $moderator->FirstName,
-					'lastname' => $moderator->LastName,
-					'email' => $moderator->Email,
+					'adminNumber' => $adminstrator->adminNumber,
+					'firstname' => $adminstrator->firstName,
+					'lastname' => $adminstrator->lastName,
+					'email' => $adminstrator->email,
 					'loggedIn' => TRUE,
-					'userType' => 'Moderator'
+					'userType' => 'Administrator'
 				];
-				//Set moderator's session data
+				//Set adminstrator's session data
 				$session->set($ses_data);
 
 				
 			}
-			//If the user wasn't found in the client or moderator tables
+			//If the user wasn't found in the customer or adminstrator tables
 			//Let user know their credentials were not found in the database
 			else{
 				$session->setFlashdata('unsuccessful', 'Email or password is incorrect');
@@ -127,11 +152,11 @@ class GeneralUserController extends BaseController
 			}
 
 			//Redirect the user to their respective controllers
-			if($session->get('userType') === 'Client'){
-					return redirect()->to('/Client');
+			if($session->get('userType') === 'Customer'){
+					return redirect()->to('/Customer');
 			}
-			else if($session->get('userType') === 'Moderator'){
-					return redirect()->to('/Moderator');
+			else if($session->get('userType') === 'Administrator'){
+					return redirect()->to('/Administrator');
 			}
 		}
 		//If the form was not submitted, display login page
@@ -153,61 +178,33 @@ class GeneralUserController extends BaseController
 	}
 
 	
-
-	public function workouts($workoutID = null){
+	//Browse products
+	public function browseproducts($produceCode = null){
 		$data = [];
-		$workoutModel = new WorkoutModel();
-		$musclesExercisedModel = new MusclesExercisedModel();
+		$productModel = new ProductModel();
 		//Determine which header to use depending on the user type
-		$whichHeader = strtolower('templates/'.session()->get('userType').'header');
+		if(session()->get('userType'))
+			$whichHeader = strtolower('templates/'.session()->get('userType').'header');
+		else
+			$whichHeader = 'templates/header';
 
 		//If a workout ID was passed to the method, display the details of that workout
-		if($workoutID)
+		if($produceCode)
 			{
-				$musclesWorked = [];
-				$allMusclesInWorkout = [];
-				//Create object to get each exercise in the workout
-				$exercisesInWorkoutModel = new ExercisesInWorkoutModel();
-				//For every exercise in the workout, Get the muscle groups worked by an exercise
-				//Add muscle group to array '$musclesWorked'
-				foreach($exercisesInWorkoutModel->exercisesInWorkoutStrArr($workoutID) as $exercise)
-				{
-					array_push($musclesWorked,$musclesExercisedModel->MusclesInExercise($exercise));
-				}
-				
-				foreach($musclesWorked as $muscle)
-				{
-					$temp = explode(",",rtrim($muscle,", "));
-					// '$temp' is an array that takes the musclesWorked string and stores individual elements
-					// separated by a comma
-					foreach($temp as $element)
-					{
-						//if the element in temp is a valid muscle, add it to the array
-						//This is checked because elements that are just whitespace must be filtered out
-						if(! in_array($element,$allMusclesInWorkout) && strlen($element) >= 3)
-							array_push($allMusclesInWorkout,$element);
-							
-					}
-					
-				}
-				//Now all data is gathered, populate the data array
-				$data['musclesForWorkout'] = $allMusclesInWorkout;
-				$data['workout_data'] = $workoutModel->getWorkout($workoutID);
-				$data['exercise_data'] = $exercisesInWorkoutModel->WorkoutExercises($workoutID, $musclesWorked);
-				$data['secondsExercised'] = $exercisesInWorkoutModel->totalSecondsExercising($workoutID);
+				$data['selected_product'] = $productModel->getProduct($produceCode);
 				//Display the workout details to the user
 				echo view($whichHeader, $data);
-				echo view('viewworkout',$data);
+				echo view('viewproduct',$data);
 				echo view('templates/footer');
 
 			}
 		//Otherwise display all the workouts for the user to choose from
 		else
 			{
-				$data['workout_data'] = $workoutModel->listAll();
+				$data['product_data'] = $productModel->listAll();
 				//Display all workouts
 				echo view($whichHeader, $data);
-				echo view('workouts',$data);
+				echo view('products',$data);
 				echo view('templates/footer');
 			}
 	}
@@ -217,9 +214,9 @@ class GeneralUserController extends BaseController
 		$data = [];
 		$whichHeader = strtolower('templates/'.session()->get('userType').'header');
 
-		$workoutModel = new WorkoutModel();
+		$productModel = new productModel();
 		//Get each workout that are featured, and store in data array
-		$data['featured_workouts'] = $workoutModel->getFeatured();
+		$data['featured_workouts'] = $productModel->getFeatured();
 		echo view($whichHeader, $data);
 		echo view('featured', $data);
 		echo view('templates/footer');
