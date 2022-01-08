@@ -31,10 +31,20 @@ class ProductModel extends Model {
         return $query[0];
     }
 
+    //Remove product?
     public function removeWorkout($produceCode)
     {
         $builder = $this->builder();
         $query = $builder->where('produceCode', $produceCode)->delete();
+    }
+
+    public function searchProducts($key){
+        $builder = $this->builder();
+        if(!($key))
+            $query = $builder->get();
+        else
+            $query = $builder->like('description',$key)->get();
+        return $query;
     }
 
 

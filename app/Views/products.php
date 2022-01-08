@@ -19,6 +19,30 @@
                         <?= session()->get('unsuccessful') ?>
                     </div>
                 <?php endif; ?>
+                <form class="d-flex input-group w-50 offset-3 mb-4 mt-4" action="<?php echo base_url();?>/browseproducts" method="post">
+                    <input
+                    type="search"
+                    class="form-control"
+                    placeholder="Product name"
+                    aria-label="Search"
+                    name="key"
+                    value="<?= set_value('key',$key) ?>"
+                    />
+                    <button
+                    class="btn btn-outline-primary"
+                    type="submit"
+                    data-mdb-ripple-color="dark"
+                    >
+                    Search
+                    </button>
+                    <button
+                    class="btn btn-outline-warning"
+                    type="submit"
+                    data-mdb-ripple-color="dark"
+                    >
+                    <a href="<?php echo base_url(); ?>/browseproducts">Clear</a>
+                    </button>
+                </form>
             <?php
                 echo '<div class="row justify-content-md-center">';
                 foreach( $product_data->getResult() as $row)
