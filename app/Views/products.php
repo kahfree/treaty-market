@@ -45,6 +45,7 @@
                 </form>
             <?php
                 echo '<div class="row justify-content-md-center">';
+                
                 foreach( $product_data->getResult() as $row)
                 {
                     echo '<div class="card col-lg-3 m-1">
@@ -56,12 +57,12 @@
                             
                             <div class="row justify-content-md-center">
                                 <input type="submit" class="btn btn-primary" name="submit" value="Add to cart">
-                                <a href="'.base_url().'/browseproducts/'.$row->produceCode.'" class="btn btn-info ml-1">View</a>
                                 <a href="'.base_url().'/addToWishlist/'.$row->produceCode.'/" class="btn btn-warning ">Add to wishlist</a>
                             </div>
                             <div class="row mt-2 justify-content-md-left">
                                 <label for="quantity" class="ml-3">Quantity:</label>
                                 <input class="col-md-3 p-1 ml-1" type="number" name="quantity" id="quantity" min="1" max="'.$row->quantityInStock.'">
+                                <a href="'.base_url().'/browseproducts/'.$row->produceCode.'" class="btn btn-info ml-1">View</a>
                             </div>
 
                             </form>

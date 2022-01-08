@@ -190,7 +190,7 @@ class GeneralUserController extends BaseController
 		else
 			$whichHeader = 'templates/header';
 
-		//If a produce code was passed to the method, display the details of that workout
+		//If a produce code was passed to the method, display the details of that product
 		if($produceCode)
 			{
 				$data['selected_product'] = $productModel->getProduct($produceCode);

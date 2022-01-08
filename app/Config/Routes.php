@@ -46,6 +46,11 @@ $routes->get('/viewCart','CustomerController::viewCart');
 $routes->get('/wishlist','CustomerController::viewWishlist');
 $routes->match(['get','post'],'/addToWishlist/(:any)','CustomerController::addToWishlist/$1');
 $routes->get('/removeFromWishlist/(:any)', 'CustomerController::removeFromWishlist/$1');
+$routes->get('/orders','CustomerController::orders');
+$routes->get('/orderdetails/(:any)', 'CustomerController::orderDetails/$1');
+$routes->match(['get','post'],'/amendorderdetails/(:any)','CustomerController::amendorderdetails/$1');
+$routes->match(['get','post'],'/addProductToOrder/(:any)/(:any)','CustomerController::addProductToOrder/$1/$2');
+$routes->get('/removeProductFromOrder/(:any)/(:any)','CustomerController::removeProductFromOrder/$1/$2');
 
 $routes->get('/Administrator', 'AdministratorController::index');
 

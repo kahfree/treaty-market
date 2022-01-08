@@ -5,6 +5,8 @@ use App\Helpers\HelperTable;
 use App\Models\ProductModel;
 use App\Models\CustomerModel;
 use App\Models\WishlistModel;
+use App\Models\OrderModel;
+use App\Models\OrderDetailsModel;
 class CustomerController extends BaseController
 {
 
@@ -22,7 +24,7 @@ class CustomerController extends BaseController
 		$data = [];
 		helper(['form']);
 		$model = new ClientModel();
-		$postModel = new PostModel();
+		$orderModel = new PostModel();
 		//If the edit user details form was submitted
 		if($this->request->getMethod() == 'post')
 		{
@@ -91,23 +93,146 @@ class CustomerController extends BaseController
     //view order details type function?
 	public function profile(){
 		$data = [];
-		$postModel = new PostModel();
-		$clientModel = new ClientModel();
+		$orderModel = new PostModel();
+		$customerModel = new ClientModel();
 		//Get all the posts the client has made and add to data array
-		$data['client_posts'] = $postModel->getAllPosts(session()->get('clientID'));
+		$data['client_posts'] = $orderModel->getAllPosts(session()->get('clientID'));
 		//Get the client's details and add to data array
-		$data['client'] = $clientModel->getClientByID(session()->get('clientID'));
+		$data['client'] = $customerModel->getClientByID(session()->get('clientID'));
 		echo view('templates/clientheader' , $data);
 		echo view('clientprofile');
 		echo view('templates/footer');
 	}
+	public function orders(){
+		$data = [];
+		$orderModel = new OrderModel();
+		$customerModel = new CustomerModel();
+		//Get all the orders the customer has made and add to data array
+		$data['customer_orders'] = $orderModel->getAllCustomerOrders($customerModel->getCustomerByEmail(session()->get('email'))->customerNumber);
+
+		echo view('templates/customerheader' , $data);
+		echo view('customerorders');
+		echo view('templates/footer');
+	}
+
+	public function orderdetails($orderNumber) {
+		$data = [];
+		$orderDetailsModel = new OrderDetailsModel();
+		$productModel = new ProductModel();
+		$orderModel = new OrderModel();
+		$products = [];
+		$orderdetails = $orderDetailsModel->getAllProductsOnOrder($orderNumber);
+		foreach($orderdetails as $row) {
+			array_push($products,$productModel->getProduct($row->produceCode));
+		}
+		$order = $orderModel->getOrder($orderNumber);
+		$data['order'] = $order;
+		$data['products'] = $products;
+		$data['order_details'] = $orderdetails;
+
+		echo view('templates/customerheader', $data);
+		echo view('vieworderdetails');
+		echo view('templates/footer');
+
+	}
+
+	public function amendorderdetails($orderNumber) {
+		$data = [];
+		helper(['form']);
+		$orderDetailsModel = new OrderDetailsModel();
+		$productModel = new ProductModel();
+		$orderModel = new OrderModel();
+		$products = [];
+		$orderdetails = $orderDetailsModel->getAllProductsOnOrder($orderNumber);
+		foreach($orderdetails as $row) {
+			array_push($products,$productModel->getProduct($row->produceCode));
+		}
+		$order = $orderModel->getOrder($orderNumber);
+		$data['order'] = $order;
+		$data['products'] = $products;
+		$data['order_details'] = $orderdetails;
+
+		echo view('templates/customerheader', $data);
+		echo view('amendorderdetails');
+		echo view('templates/footer');
+
+	}
+
+	public function addProductToOrder($orderNumber, $produceCode = null){
+		$data = [];
+		helper(['form']);
+		$productModel = new ProductModel();
+		$orderDetailsModel = new OrderDetailsModel();
+		
+		//Determine which header to use depending on the user type
+		if(session()->get('userType'))
+			$whichHeader = strtolower('templates/'.session()->get('userType').'header');
+		else
+			$whichHeader = 'templates/header';
+
+		if($this->request->getMethod() == 'post')
+		{
+			$priceEach = $productModel->getProduct($produceCode)->bulkSalePrice;
+			$quantity = $this->request->getPost('quantity');
+			if(!$quantity)
+				$quantity = 1;
+			$newData = [
+				'orderNumber' => $orderNumber,
+				'produceCode' => $produceCode,
+				'quantityOrdered' => $quantity,
+				'priceEach' => $priceEach
+			];
+			$orderDetailsModel->save($newData);
+			return redirect()->to('/amendorderdetails/'.$orderNumber);
+		}
+		else{
+			$produceCodeList = $orderDetailsModel->getProduceCodeArray($orderNumber);
+			$products = $productModel->listAll()->getResult();
+			$productsFiltered = [];
+			//Filter products out that are currently on the order
+			foreach($products as $product) 
+				foreach($produceCodeList as $p)
+					if(!(in_array($product->produceCode,$produceCodeList)))
+						if(!in_array($product,$productsFiltered))
+							array_push($productsFiltered,$product);
+
+			$data['product_data'] = $productsFiltered;
+			$data['orderNumber'] = $orderNumber;
+		//Display all products
+		echo view($whichHeader, $data);
+		echo view('addproductstoorder',$data);
+		echo view('templates/footer');
+		}
+		
+
+	}
+
+	public function removeProductFromOrder($orderNumber, $produceCode){
+		$data = [];
+		helper(['form']);
+		$productModel = new ProductModel();
+		$orderDetailsModel = new OrderDetailsModel();
+		
+		//Determine which header to use depending on the user type
+		if(session()->get('userType'))
+			$whichHeader = strtolower('templates/'.session()->get('userType').'header');
+		else
+			$whichHeader = 'templates/header';
+
+		$orderDetailsModel->removeProductFromOrder($orderNumber, $produceCode);
+		return redirect()->to('/amendorderdetails/'.$orderNumber);
+	}
+
     //add to cart type function?
 	public function addToCart($produceCode = null){
 		helper(['form']);
 		if(session()->get('userType')){
 			if (isset($_GET['submit']))
 			{
-				$_SESSION['cart'][$produceCode] = $_GET['quantity'];
+				if($_GET['quantity'])
+					$_SESSION['cart'][$produceCode] = $_GET['quantity'];
+				else
+					$_SESSION['cart'][$produceCode] = 1;
 			}
 		return redirect()->to('/browseproducts');
 		}

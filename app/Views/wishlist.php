@@ -14,12 +14,13 @@
             <form class="" action="<?php echo base_url();?>/login" method="post">
             <?php
                echo '<table class="table table-striped col-12">';
-               echo '<tr><th>Product Name</th><th>Comment</th><th>Priority</th><th>Quantity</th><th>Options</th></tr>';
+               echo '<tr><th>Image</th><th>Product Name</th><th>Comment</th><th>Priority</th><th>Quantity</th><th>Options</th></tr>';
                if($wishlist) {
 
                
                for($i = 0; $i < count($wishlist); $i++){
                    echo '<tr>';
+                   echo '<td><img class="card-img-top" src="'.base_url().'/assets/images/products/thumbs/'.$products[$i]->photo.'" alt="Card image cap"></td>';
                    echo '<td>'.$products[$i]->description.'</td>';
                    echo '<td>'.$wishlist[$i]->comment.'</td>';
                    echo '<td>'.$wishlist[$i]->priority.'</td>';
