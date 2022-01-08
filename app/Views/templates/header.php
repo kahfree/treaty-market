@@ -13,9 +13,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/shards-ui@latest/dist/js/shards.min.js"></script>
   </head>
-    <body>
+    <body style="background-color:#F5F5DC">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#c9ffe5">
       <div class="container">
   <a class="navbar-brand" href="<?php echo base_url();?>/"><img src="<?=base_url()?>/assets/images/site/logo_small.png"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

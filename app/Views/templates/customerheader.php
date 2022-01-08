@@ -13,7 +13,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/shards-ui@latest/dist/js/shards.min.js"></script>
   </head>
-    <body>
+    <body style="background-color:#F5F5DC">
 
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#c9ffe5">
       <div class="container">
@@ -37,7 +37,7 @@
         <a class="nav-link" href="<?php echo base_url();?>/news">News</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="<?php echo base_url();?>/search">Search</a>
+        <a class="nav-link" href="<?php echo base_url();?>/orders">Orders</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="<?php echo base_url();?>/wishlist/">Wishlist</a>
