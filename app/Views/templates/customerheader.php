@@ -15,7 +15,7 @@
   </head>
     <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#c9ffe5">
       <div class="container">
   <a class="navbar-brand" href="<?php echo base_url();?>/Customer"><img src="<?=base_url()?>/assets/images/site/logo_small.png"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,12 +40,17 @@
         <a class="nav-link" href="<?php echo base_url();?>/search">Search</a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" href="<?php echo base_url();?>/wishlist/">Wishlist</a>
+      </li>
+      </ul>
+      
+      <span class="nav-item navbar-nav">
         <a class="nav-link" href="<?php echo base_url();?>/logout">Logout</a>
-      </li>
-      <li class="nav-item">
+      </span>
+      <span class="nav-item navbar-nav">
         <a class="nav-link" href="<?php echo base_url();?>/viewCart">View Cart</a>
-      </li>
-    </ul>
+      </span>
+    
   </div>
 </nav>
 </div>

@@ -39,7 +39,13 @@ $routes->get('/browseproducts/(:any)', 'GeneralUserController::browseproducts/$1
 $routes->get('/browseproducts', 'GeneralUserController::browseproducts');
 
 $routes->get('/Customer', 'CustomerController::index');
-
+$routes->match(['post','get'],'/addToCart/(:any)', 'CustomerController::addToCart/$1');
+$routes->get('/addToCart/(:any)', 'CustomerController::addToCart/$1');
+$routes->get('/removeFromCart/(:any)', 'CustomerController::removeFromCart/$1');
+$routes->get('/viewCart','CustomerController::viewCart');
+$routes->get('/wishlist','CustomerController::viewWishlist');
+$routes->match(['get','post'],'/addToWishlist/(:any)','CustomerController::addToWishlist/$1');
+$routes->get('/removeFromWishlist/(:any)', 'CustomerController::removeFromWishlist/$1');
 
 $routes->get('/Administrator', 'AdministratorController::index');
 
