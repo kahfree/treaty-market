@@ -36,10 +36,10 @@ $routes->match(['get','post'],'register', 'GeneralUserController::register');
 $routes->match(['get','post'],'login', 'GeneralUserController::login');
 $routes->match(['get','post'],'logout', 'GeneralUserController::logout');
 $routes->get('/browseproducts/(:any)', 'GeneralUserController::browseproducts/$1');
-$routes->get('/browseproducts', 'GeneralUserController::browseproducts');
+$routes->match(['get','post'],'/browseproducts', 'GeneralUserController::browseproducts');
 
 $routes->get('/Customer', 'CustomerController::index');
-$routes->match(['post','get'],'/addToCart/(:any)', 'CustomerController::addToCart/$1');
+$routes->match(['get','post'],'/addToCart/(:any)', 'CustomerController::addToCart/$1');
 $routes->get('/addToCart/(:any)', 'CustomerController::addToCart/$1');
 $routes->get('/removeFromCart/(:any)', 'CustomerController::removeFromCart/$1');
 $routes->get('/viewCart','CustomerController::viewCart');

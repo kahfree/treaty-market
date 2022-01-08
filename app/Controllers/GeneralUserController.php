@@ -204,7 +204,16 @@ class GeneralUserController extends BaseController
 		//Otherwise display all the products for the user to choose from
 		else
 			{
-				$data['product_data'] = $productModel->listAll();
+				if($this->request->getMethod() == 'post'){
+
+					$result = $productModel->searchProducts($this->request->getPost('key'));
+					$data['product_data'] = $result;
+					$data['key'] = $this->request->getPost('key');
+				}
+				else{
+					$data['key'] = "";
+					$data['product_data'] = $productModel->listAll();
+				}
 				//Display all products
 				echo view($whichHeader, $data);
 				echo view('products',$data);
