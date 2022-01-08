@@ -118,7 +118,8 @@ class GeneralUserController extends BaseController
 					'lastname' => $customer->contactLastName,
 					'email' => $customer->email,
 					'loggedIn' => TRUE,
-					'userType' => 'Customer'
+					'userType' => 'Customer',
+					'cart' => array()
 				];
 
 				//Set the customer's session data
@@ -181,6 +182,7 @@ class GeneralUserController extends BaseController
 	//Browse products
 	public function browseproducts($produceCode = null){
 		$data = [];
+		helper(['form']);
 		$productModel = new ProductModel();
 		//Determine which header to use depending on the user type
 		if(session()->get('userType'))
@@ -188,21 +190,22 @@ class GeneralUserController extends BaseController
 		else
 			$whichHeader = 'templates/header';
 
-		//If a workout ID was passed to the method, display the details of that workout
+		//If a produce code was passed to the method, display the details of that workout
 		if($produceCode)
 			{
 				$data['selected_product'] = $productModel->getProduct($produceCode);
-				//Display the workout details to the user
+				print_r($data['selected_product']);
+				//Display the product details to the user
 				echo view($whichHeader, $data);
 				echo view('viewproduct',$data);
 				echo view('templates/footer');
 
 			}
-		//Otherwise display all the workouts for the user to choose from
+		//Otherwise display all the products for the user to choose from
 		else
 			{
 				$data['product_data'] = $productModel->listAll();
-				//Display all workouts
+				//Display all products
 				echo view($whichHeader, $data);
 				echo view('products',$data);
 				echo view('templates/footer');

@@ -1,15 +1,10 @@
 <?php
 
 namespace App\Controllers;
-#use App\Models\ClientModel;
-#use App\Models\ExerciseModel;
-#use App\Models\WorkoutModel;
-#use App\Models\SavedWorkoutModel;
-#use App\Models\PostModel;
-#use App\Models\MuscleModel;
-#use App\Models\MusclesExercisedModel;
-#use App\Models\ExercisesInWorkoutModel;
-#use App\Helpers\Filter;
+use App\Helpers\HelperTable;
+use App\Models\ProductModel;
+use App\Models\CustomerModel;
+use App\Models\WishlistModel;
 class CustomerController extends BaseController
 {
 
@@ -19,7 +14,7 @@ class CustomerController extends BaseController
 		//Otherwise display the client dashboard
 		echo view('templates/customerheader', $data);
 		echo view('customerhome');
-		echo view('client_3_panels');
+		//echo view('client_3_panels');
 		echo view('templates/footer');
 	}
     //amend order details type function?
@@ -107,57 +102,111 @@ class CustomerController extends BaseController
 		echo view('templates/footer');
 	}
     //add to cart type function?
-	public function saveWorkout($workoutID = null){
-		$workoutModel = new WorkoutModel();
-		$savedWorkoutModel = new SavedWorkoutModel();
-		$session = session();
-		//Execute the add to savedd method in the savedWorkoutModel class
-		$savedWorkoutModel = $savedWorkoutModel->addToSaved($workoutID,$session->get('clientID'));
-		return redirect()->to('/workouts');
+	public function addToCart($produceCode = null){
+		helper(['form']);
+		if(session()->get('userType')){
+			if (isset($_GET['submit']))
+			{
+				$_SESSION['cart'][$produceCode] = $_GET['quantity'];
+			}
+		return redirect()->to('/browseproducts');
+		}
+		else{
+			return redirect()->to('/login');
+		}
 	}
     //remove from cart type function?
-	public function removeFromSaved($workoutID = null){
+	public function removeFromCart($produceCode = null){
 		$data = [];
 
-		$savedWorkoutModel = new SavedWorkoutModel();
+		$session = session();
+		$cart = $session->cart;
+		unset($cart[$produceCode]);
+		$session->cart = $cart;
 
-		//If the workout exists in the client's saved workouts
-		if(!$savedWorkoutModel->validateInsert($workoutID, session()->get('clientID')))
-		{
-			//Remove the workout from the client's saved workouts list
-			$savedWorkoutModel->removeFromSaved($workoutID,session()->get('clientID'));
-			//Let client know the workout has been removed
-			session()->setFlashdata('success','The workout has been removed from your library');
-		}
-		//Otherwise, the workout cannot be removed as it is not contained in the client's saved workout list
-		else
-		{
-			session()->setFlashdata('unsuccessful','There has been a problem performing this task.');
-		}
-
-		return redirect()->to('/savedWorkouts');
+		return redirect()->to('/viewCart');
 		
 	}
     //view cart type function?
-	public function savedWorkouts(){
+	public function viewCart(){
 		$data = [];
 		$session = session();
-		$workoutModel = new WorkoutModel();
-		$savedWorkoutModel = new SavedWorkoutModel();
-		//Get all workouts the client has in their saved workouts list
-		$savedWorkouts = $savedWorkoutModel->allWorkoutsPerClient($session->get('clientID'));
-		$workouts = [];
-		//For every saved workout in the client's list
-		foreach($savedWorkouts as $sw)
+		$productModel = new ProductModel();
+		$products = [];
+		$quantities = [];
+		if($_SESSION['cart'])
 		{
-			//Adding all the workout ID's to the workout model
-			array_push($workouts,$workoutModel->getWorkout($sw)[0]);
+			foreach($_SESSION['cart'] as $productID => $quantity)
+			{
+				$product = $productModel->getProduct($productID);
+				array_push($products,$product);
+				array_push($quantities,$quantity);
+			}
 		}
-		$data['workout_data'] = $workouts;
-		date_default_timezone_set('Europe/Dublin');
-		echo view('templates/clientheader', $data);
-		echo view('savedworkouts',$data);
+			$data['products'] = $products;
+			$data['quantities'] = $quantities;
+		
+		echo view('templates/customerheader', $data);
+		//HelperTable::productsToTable($products, $quantities);
+		echo view('viewcart',$data);
 		echo view('templates/footer');
+	}
+	//View wishlist?
+	public function viewWishlist(){
+		$data = [];
+		$session = session();
+		$productModel = new ProductModel();
+		$wishlistModel = new WishlistModel();
+		$customerModel = new CustomerModel();
+		$customer = $customerModel->getCustomerByEmail(session()->get('email'));
+		$wishlists = $wishlistModel->getWishList($customer->customerNumber);
+		$products = [];
+		foreach($wishlists as $wishlist){
+			array_push($products, $productModel->getProduct($wishlist->produceCode));
+		}
+		
+		$data['products'] = $products;
+		$data['wishlist'] = $wishlists;
+		
+		echo view('templates/customerheader', $data);
+		//HelperTable::productsToTable($products, $quantities);
+		echo view('wishlist',$data);
+		echo view('templates/footer');
+	}
+
+	public function addToWishlist($produceCode = null){
+		helper(['form']);
+		if(session()->get('userType')){
+			$model = new WishlistModel();
+			$customerModel = new CustomerModel();
+			$customer = $customerModel->getCustomerByEmail(session()->get('email'));
+			$newData = [
+				'customerNumber' => $customer->customerNumber,
+				'produceCode' => $produceCode,
+				'comment' => NULL,
+				'priority' => NULL,
+				'quantity' => 1
+			];
+			print_r($newData);
+			$model->save($newData);
+		return redirect()->to('/browseproducts');
+		}
+		else{
+			return redirect()->to('/login');
+		}
+	}
+
+	public function removeFromWishlist($produceCode = null){
+		$data = [];
+		$customerModel = new CustomerModel();
+		$wishlistModel = new WishlistModel();
+		$customer = $customerModel->getCustomerByEmail(session()->get('email'));
+
+		$wishlistModel->removeWishlistItem($produceCode,$customer->customerNumber);
+		
+
+		return redirect()->to('/wishlist');
+		
 	}
 
 	public function completeWorkout($workoutID = null){

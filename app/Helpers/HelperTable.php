@@ -50,6 +50,20 @@ Class HelperTable {
 		    echo '</tr>';
 echo '</table>';
     }
+
+    public static function productsToTable($products, $quantities){
+        echo '<table class="table table-striped">';
+        echo '<tr><th>Description</th><th>category</th><th>quantity</th><th>photo</th></tr>';
+        for($i = 0; $i < count($products); $i++){
+		    echo '<tr>';
+		    echo '<td>'.$products[$i]->description.'</td>';
+            echo '<td>'.$products[$i]->category.'</td>';
+            echo '<td>'.$quantities[$i].'</td>';
+            echo '<td>'.$products[$i]->photo.'</td>';
+		    echo '</tr>';
+        }
+echo '</table>';
+    }
     
     
 }
