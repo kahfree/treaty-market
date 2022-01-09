@@ -11,7 +11,7 @@
                         <?= session()->get('unsuccessful') ?>
                     </div>
                 <?php endif; ?>
-            <form class="" action="<?php echo base_url();?>/login" method="post">
+            <form class="" action="<?php echo base_url();?>/checkout" method="post">
             <?php
                echo '<table class="table table-striped col-12">';
                echo '<tr><th>Description</th><th>category</th><th class="col-md-2">quantity</th><th >photo</th><th>Options</th></tr>';
@@ -22,7 +22,7 @@
                    echo '<tr>';
                    echo '<td>'.$products[$i]->description.'</td>';
                    echo '<td>'.$products[$i]->category.'</td>';
-                   echo '<td class="col-md-3"><input class="col-md-3 p-1 ml-1" type="number" name="quantity" id="quantity" min="1" max="'.$products[$i]->quantityInStock.'" value="'.$quantities[$i].'"></td>';
+                   echo '<td class="col-md-3"><input class="col-md-3 p-1 ml-1" type="number" name="quantity_'.$products[$i]->produceCode.'" id="quantity_'.$products[$i]->produceCode.'" min="1" max="'.$products[$i]->quantityInStock.'" value="'.$quantities[$i].'"></td>';
                    echo '<td><img class="card-img-top" src="'.base_url().'/assets/images/products/thumbs/'.$products[$i]->photo.'" alt="Card image cap"></td>';
                    echo '<td><a href="'.base_url().'/removeFromCart/'.$products[$i]->produceCode.'/">Remove</a>';
                    echo '</td></tr>';
@@ -37,7 +37,7 @@
                 
         ?>
 
-            <button type="submit" class="btn btn-primary">Checkout</button>
+            <button type="submit" class="btn btn-outline-primary btn-block btn-lg ">Checkout</button>
             </form>
         </div>
 </div> 

@@ -44,7 +44,7 @@
                     echo '</div>';
                     echo '<div class="card-body">';
                    
-                    echo '<h6 class="card-text pb-0 mb-0"><span class="">Quantity:</span>'.$order_details[$i]->quantityOrdered.' <span class="float-right"><span class="font-weight-bold">Price: </span>'.$order_details[$i]->priceEach.'</span></h6>';
+                    echo '<h6 class="card-text pb-0 mb-0"><span class="font-weight-bold">Quantity:</span> '.$order_details[$i]->quantityOrdered.' <span class="float-right"><span class="font-weight-bold">Price: </span>'.$order_details[$i]->priceEach.'</span></h6>';
                     echo '</div>';
                     echo '</div>';
                     echo '</div>';

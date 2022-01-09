@@ -1,5 +1,5 @@
-<div class="mx-auto" style="width: 70%;">
-    <h1 class="text-center">Every product in the database</h1>
+<div class="container" style="">
+    <h1 class="text-center col-12">Every product in the database</h1>
     <?php if(session()->get('userType') == 'Client'): ?>
     <a href="<?=base_url()?>/generateWorkout"><input type="button" class="btn btn-success mb-3" value="Generate Custom Workout"></a>
     <?php endif; ?>
@@ -44,34 +44,41 @@
                     </button>
                 </form>
             <?php
-                echo '<div class="row justify-content-md-center">';
-                
-                foreach( $product_data->getResult() as $row)
-                {
-                    echo '<div class="card col-lg-3 m-1">
-                            <img class="card-img-top" src="'.base_url().'/assets/images/products/thumbs/'.$row->photo.'" alt="Card image cap">
-                            <div class="card-body">
-                            <h5 class="card-title">'.$row->description.'</h5>
-                            <p class="card-text">Supplied by '.$row->supplier.'</p>
-                            <form class="" action="'.base_url().'/addToCart/'.$row->produceCode.'/" method="get">
-                            
-                            <div class="row justify-content-md-center">
-                                <input type="submit" class="btn btn-primary" name="submit" value="Add to cart">
-                                <a href="'.base_url().'/addToWishlist/'.$row->produceCode.'/" class="btn btn-warning ">Add to wishlist</a>
-                            </div>
-                            <div class="row mt-2 justify-content-md-left">
-                                <label for="quantity" class="ml-3">Quantity:</label>
-                                <input class="col-md-3 p-1 ml-1" type="number" name="quantity" id="quantity" min="1" max="'.$row->quantityInStock.'">
-                                <a href="'.base_url().'/browseproducts/'.$row->produceCode.'" class="btn btn-info ml-1">View</a>
-                            </div>
+                //echo '<div class="row justify-content-md-center">';
+                //echo '<div class="container"';
+                echo '<div class="card-deck">';
+    foreach($product_data->getResult() as $row)
+    {
+        
+        echo "<div class='col-md-4'>";
+                    echo '<div class="card">';
 
-                            </form>
-                            </div>
-                            </div>';
-                    
-
-                }
-                echo '</div>';
+                    echo '<img class="card-img-top" src="'.base_url().'/assets/images/products/thumbs/'.$row->photo.'" alt="Card image cap">';
+                    echo '<div class="card-header">';
+                    echo "<h5 class='card-title'>$row->description</h5>";
+                    echo "<p class='card-subtitle'>Supplied by $row->supplier</p>";
+                    echo '</div>';
+                    echo '<div class="card-body">';
+                    echo '<form class="" action="'.base_url().'/addToCart/'.$row->produceCode.'/" method="get">';
+                    echo '<div class="row justify-content-md-center">';
+                    echo '<input type="submit" class="btn btn-primary" name="submit" value="Add to cart">';
+                    echo '<a href="'.base_url().'/addToWishlist/'.$row->produceCode.'/" class="btn btn-warning ">Add to wishlist</a>';
+                    echo '</div>';
+                    echo '<div class="row mt-2 justify-content-md-left">';
+                    echo '<label for="quantity" class="ml-3">Quantity:</label>';
+                    echo '<input class="col-md-3 p-1 ml-1" type="number" name="quantity" id="quantity" min="1" max="'.$row->quantityInStock.'">';
+                    echo '<a href="'.base_url().'/browseproducts/'.$row->produceCode.'" class="btn btn-info ml-1">View</a>';
+                    echo '</div>';
+                    echo '</form>';
+                    echo '</div>';
+                    echo '</div>';
+                    echo '</div>';
+        
+    }
+    echo '</div>';
+    echo '</div>';
+    echo '</div>';
+                //echo '</div>';
             ?>
             
         </div>

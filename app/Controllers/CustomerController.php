@@ -144,6 +144,25 @@ class CustomerController extends BaseController
 		$orderModel = new OrderModel();
 		$products = [];
 		$orderdetails = $orderDetailsModel->getAllProductsOnOrder($orderNumber);
+		if($this->request->getMethod() == 'post')
+		{
+			foreach($orderdetails as $row)
+			{
+				$quantity = $this->request->getPost('product_'.$row->produceCode.'_quantity');
+				if($row->quantityOrdered != $quantity)
+				{
+					$newData = [
+						'orderNumber' => $orderNumber,
+						'produceCode' => $row->produceCode,
+						'quantityOrdered' => $quantity,
+						'priceEach' => $row->priceEach
+					];
+					$orderDetailsModel->replace($newData);
+				}
+			}
+			return redirect()->to('/orderdetails/'.$orderNumber);
+		}
+		
 		foreach($orderdetails as $row) {
 			array_push($products,$productModel->getProduct($row->produceCode));
 		}
@@ -274,6 +293,32 @@ class CustomerController extends BaseController
 		echo view('templates/customerheader', $data);
 		//HelperTable::productsToTable($products, $quantities);
 		echo view('viewcart',$data);
+		echo view('templates/footer');
+	}
+
+	public function checkout(){
+		$data = [];
+		helper(['form']);
+		$orderDetailsModel = new OrderDetailsModel();
+		if($this->request->getMethod() == 'post')
+		{
+			$session = session();
+			$produceCodeList = [];
+			$updatedCart = [];
+			foreach(session()->get('cart') as $produceCode => $quantity)
+			{
+					$updatedCart[$produceCode] = $this->request->getPost('quantity_'.$produceCode);
+			}
+
+			$session->remove('cart');
+			foreach($updatedCart as $produceCode=>$quantity)
+			{
+				$_SESSION['cart'][$produceCode] = $quantity;
+			}
+		}
+
+		echo view('templates/customerheader',$data);
+		echo view('confirmorder');
 		echo view('templates/footer');
 	}
 	//View wishlist?

@@ -14,7 +14,7 @@
                         <?= session()->get('success') ?>
                     </div>
                 <?php endif; ?>
-                <form class="" action="<?php echo base_url();?>/amendorderdetails" method="post">
+                <form class="" action="<?php echo base_url();?>/amendorderdetails/<?= $order->orderNumber?>" method="post">
 
                 <div class="row">
                 <?php for($i = 0; $i < count($products); $i++){ ?>
