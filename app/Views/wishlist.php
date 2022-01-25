@@ -11,7 +11,7 @@
                         <?= session()->get('unsuccessful') ?>
                     </div>
                 <?php endif; ?>
-            <form class="" action="<?php echo base_url();?>/login" method="post">
+            <form class="" action="<?php echo base_url();?>/checkout" method="post">
             <?php
                echo '<table class="table table-striped col-12">';
                echo '<tr><th>Image</th><th>Product Name</th><th>Comment</th><th>Priority</th><th>Quantity</th><th>Options</th></tr>';
