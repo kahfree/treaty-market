@@ -1,49 +1,101 @@
-
-
-    <div class="container">
-
-    <div class='col-12 mb-2 '>
-    <h1 class='m-2'>Confirming Your Order</h1>
-                    <div class="card">
-                    
-                    <div class="card-header">
-                    <h5 class='card-title'><span class=''><a href='<?=base_url()?>/viewcart/'>< Go Back</a></span>
-
-                    <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><span class="font-weight-bold">Order Date:</span> <?=date('Y-m-d')?></li>
-                    <li class="list-group-item"><span class="font-weight-bold">Required Date:</span> <?=$order->requiredDate?></li>
-                    <li class="list-group-item"><span class="font-weight-bold">Shipped Date:</span> <?=$order->shippedDate?></li>
-                    </ul>
-                    
+<div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h1>Shopping Cart</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xxl-6">
+                <div class="card" style="border-radius: 10px;padding: 6px;">
+                    <h3 style="text-align: left;">Payment Information</h3>
+                    <form style="text-align: left;">
+                        <div class="row">
+                            <div class="col"><label class="form-label" style="text-align: left;">Cardholder Name</label><input class="form-control" type="text" style="background: var(--bs-gray-200);"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><label class="form-label">Card Number</label><input class="form-control" type="text" style="background: var(--bs-gray-200);"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-3 col-xxl-4"><label class="form-label">Expiration Date</label><input class="form-control" type="text" style="background: var(--bs-gray-200);"></div>
+                            <div class="col-xxl-3"><label class="form-label">CVV</label><input class="form-control" type="text" style="background: #e9ecef;"></div>
+                            <div class="col-xxl-5">
+                                <div class="form-check" style="margin-top: 2.35em; margin-left:1em; "><input class="form-check-input" type="checkbox" id="formCheck-1"><label class="form-check-label" for="formCheck-1" style="color: var(--bs-gray);">Save Payment Method</label></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><button class="btn btn-primary" type="button" style="margin-top: 18px;">Pay {total}</button></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="row">
+                        <div class="col">
+                            <h3>Order Summary</h3>
+                            <div>
+                                <div class="row" style="margin: 5px;">
+                                    <div class="col-xl-4"><img src="assets/images/products/thumbs/brioche.jpg"></div>
+                                    <div class="col-xl-8">
+                                        <div class="row">
+                                            <div class="col"><span>Product Title&nbsp;</span><em>x {quantity}</em></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col"><strong>{price}</strong></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin: 5px;">
+                                    <div class="col-xl-4"><img src="assets/images/products/thumbs/brioche.jpg"></div>
+                                    <div class="col-xl-8">
+                                        <div class="row">
+                                            <div class="col"><span>Product Title&nbsp;</span><em>x {quantity}</em></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col"><strong>{price}</strong></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin: 5px;">
+                                    <div class="col-xl-4"><img src="assets/images/products/thumbs/brioche.jpg"></div>
+                                    <div class="col-xl-8">
+                                        <div class="row">
+                                            <div class="col"><span>Product Title&nbsp;</span><em>x {quantity}</em></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col"><strong>{price}</strong></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin: 5px;">
+                                    <div class="col-xl-4"><img src="assets/images/products/thumbs/brioche.jpg"></div>
+                                    <div class="col-xl-8">
+                                        <div class="row">
+                                            <div class="col"><span>Product Title&nbsp;</span><em>x {quantity}</em></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col"><strong>{price}</strong></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <div class="row">
+                        <div class="col" style="margin: 15px;">
+                            <p>Subtotal</p>
+                            <p>Additional Charges</p>
+                            <p>Total</p>
+                        </div>
+                        <div class="col" style="margin: 15px;">
+                            <p><strong>{subtotal}</strong></p>
+                            <p><strong>{additional}</strong></p>
+                            <p><strong>{total}</strong></p>
+                        </div>
                     </div>
-
-    echo "<h1 class='m-2'>Products on Order #".$order->orderNumber."</h1>";        
-    echo '</div>';
-
-<?php
-    echo '<div class="card-deck">';
-    for($i = 0; $i < count($products); $i++)
-    {?>
-        
-        <div class='col-md-4'>
-                    <div class="card">
-
-                    <img class="card-img-top" src="'.base_url().'/assets/images/products/full/'.$products[$i]->photo.'" alt="Card image cap">
-                    <div class="card-header">
-                    <h5 class='card-title'><span class='font-weight-bold'>".$products[$i]->description." </span> </h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Category: '.$products[$i]->category.'  </h6>
-                    </div>
-                    <div class="card-body">
-                   
-                    <h6 class="card-text pb-0 mb-0"><span class="font-weight-bold">Quantity:</span> '.$order_details[$i]->quantityOrdered.' <span class="float-right"><span class="font-weight-bold">Price: </span>'.$order_details[$i]->priceEach.'</span></h6>
-                    </div>
-                    </div>
-                    </div>
-        
-    <?php } ?>
+                </div>
+            </div>
+        </div>
     </div>
-    </div>
-    </div>
-?>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 
