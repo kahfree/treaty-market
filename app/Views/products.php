@@ -53,7 +53,7 @@
         echo "<div class='col-md-4'>";
                     echo '<div class="card">';
 
-                    echo '<img class="card-img-top" src="'.base_url().'/assets/images/products/thumbs/'.$row->photo.'" alt="Card image cap">';
+                    echo '<img class="card-img-top" src="'.base_url().'/assets/images/products/full/'.$row->photo.'" alt="Card image cap">';
                     echo '<div class="card-header">';
                     echo "<h5 class='card-title'>$row->description</h5>";
                     echo "<p class='card-subtitle'>Supplied by $row->supplier</p>";
