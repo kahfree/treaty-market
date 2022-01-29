@@ -5,7 +5,7 @@ $session = session();
 if($session->get('loggedIn')){
         echo "<h1>Welcome home ".$session->get('firstname');
         echo '<div class="col-md-12 mx-auto">
-                <img src="assets\images\heroImageWithText.png" style="width:100%;">
+                <img src="'.base_url().'\assets\images\site\logo2.png" style="width:100%;">
             </div>';
 }
       else

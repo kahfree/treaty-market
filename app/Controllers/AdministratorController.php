@@ -10,6 +10,7 @@ namespace App\Controllers;
 #use App\Models\ExercisesInWorkoutModel;
 #use App\Models\PostModel;
 #use App\Models\ClientModel;
+use App\Models\ProductModel;
 
 class AdministratorController extends BaseController
 {
@@ -24,34 +25,64 @@ class AdministratorController extends BaseController
 		echo view('templates/footer');
 	}
 	//view products?
-	public function exercises(){
+	public function viewproducts(){
 		$data = [];
-		$musclesPerExercise = [];
-		$musclesExercisedModel = new MusclesExercisedModel();
-		$exercisemodel = new ExerciseModel();
-		//Get every exercise in the database
-		$data['exercise_data'] = $exercisemodel->listAll();
-		//Get each muscle group for each exercise
-		foreach($data['exercise_data']->getResult() as $row)
-		{
-			$musclesPerExercise[$row->ExName] = $musclesExercisedModel->MusclesInExercise($row->ExerciseID);
-		}
-		//Add these muscle groups to the data array
-		$data['musclesExercised'] = $musclesPerExercise;
-		echo view('templates/moderatorheader', $data);
-		echo view('exercises',$data);
+		$productsModel = new ProductModel();
+		//Get every product in the database
+		$data['product_data'] = $productsModel->listAll()->getResult();
+
+		echo view('templates/administratorheader', $data);
+		echo view('viewproducts',$data);
 		echo view('templates/footer');
 	}
 	//edit existing product?
-	public function editExercise($exerciseID = null){
+	public function editproduct($productID = null){
 		$data = [];
 		helper(['form']);
-		$exerciseModel = new ExerciseModel();
-		//Get the exercise details to populate the input fields for the form
-		$data['exercise'] = $exerciseModel->getExercise($exerciseID);
-		echo view('templates/moderatorheader', $data);
-		echo view('editexercise',$data);
+
+		if($this->request->getMethod() == 'post')
+		{
+			$rules = [
+				'produceCode' => 'required|max_length[15]',
+				'category' => 'required',
+				'description' => 'required|max_length[45]',
+				'supplier' => 'required',
+				'quantityInStock' => 'required',
+				'bulkBuyPrice' => 'required',
+				'bulkSalePrice' => 'required',
+			];
+
+
+			if(! $this->validate($rules)) {
+				$data['validation'] = $this->validator;
+				print_r($this->validator->listErrors());
+			}
+			else{
+				//store the new Exercise information in our database
+				$model = new ProductModel();
+				$newData = [
+					'produceCode' => $this->request->getpost('produceCode'),
+					'category' => $this->request->getpost('category'),
+					'description' => $this->request->getpost('description'),
+					'supplier' => $this->request->getpost('supplier'),
+					'quantity' => $this->request->getpost('quantity'),
+					'bulkBuyPrice' => $this->request->getpost('bulkBuyPrice'),
+					'bulkSalePrice' => $this->request->getpost('bulkSalePrice')
+				];
+				$model->save($newData);
+				$session = session();
+				$session->setFlashdata('success','successfuly Updated');
+				return redirect()->to('/viewproducts');
+			}
+		}
+	else{
+		$productsModel = new ProductModel();
+		//Get the products details to populate the input fields for the form
+		$data['product'] = $productsModel->getProduct($productID);
+		echo view('templates/administratorheader', $data);
+		echo view('editproduct',$data);
 		echo view('templates/footer');
+		}
 	}
 	//update existing product?
 	public function updateExercise(){
@@ -93,41 +124,61 @@ class AdministratorController extends BaseController
 		echo view('templates/footer');
 	}
 	//add new product?
-	public function addExercise(){
+	public function addproduct(){
 		$data = [];
-
+		helper(['form','url']);
 		if($this->request->getMethod() == 'post')
 		{
+			print_r("I posted<br>");
 			$rules = [
-				'exerciseName' => 'required|max_length[45]',
-				'equipment' => 'required',
-				'description' => 'required|max_length[500]',
-				'gifpath' => 'max_length[80]'
+				'produceCode' => 'required|max_length[15]',
+				'category' => 'required',
+				'description' => 'required|max_length[45]',
+				'supplier' => 'required',
+				'quantityInStock' => 'required',
+				'bulkBuyPrice' => 'required',
+				'bulkSalePrice' => 'required',
+				
 			];
 
 			if(! $this->validate($rules)){
+				print_r($this->validator->listErrors()."<br>");
 				$data['validation'] = $this->validator;
 			}
 
 			else{
-
-				$model = new ExerciseModel();
+				print_r("My data is valid");
+				$x_file = $this->request->getFile('photo');
+				$model = new ProductModel();
+				//$x_file->store(FCPATH.'/assets/images/products/full/');
 				$newData = [
-					'ExName' => $this->request->getpost('exerciseName'),
-					'ExDescription' => $this->request->getPost('description'),
-					'ExGifPath' => $this->request->getPost('gifpath'),
-					'ExNeedsEquipment' => $this->request->getPost('equipment'),
+					'produceCode' => $this->request->getpost('produceCode'),
+					'category' => $this->request->getpost('category'),
+					'description' => $this->request->getpost('description'),
+					'supplier' => $this->request->getpost('supplier'),
+					'quantity' => $this->request->getpost('quantity'),
+					'bulkBuyPrice' => $this->request->getpost('bulkBuyPrice'),
+					'bulkSalePrice' => $this->request->getpost('bulkSalePrice'),
+					'photo' => $x_file->getClientName()
 				];
 				$model->save($newData);
+				
+				$fullImage = \Config\Services::image()
+						->withFile($x_file)
+						->save(FCPATH .'/assets/images/products/full/'. $x_file->getFilename());
+				$thumbImage = \Config\Services::image()
+						->withFile($x_file)
+						->resize(140, 75, false, 'height')
+						->save(FCPATH .'/assets/images/products/thumbs/'. $x_file->getFilename());
 				$session = session();
-				$session->setFlashData('success','successfully added exercise');
-				return redirect()->to('/exercises');
+				$session->setFlashData('success','successfully added product');
+				return redirect()->to('/viewproducts');
 			}
 		}
 
-
-		echo view('templates/moderatorheader');
-		echo view('addexercise');
+		print_r("I didn't post<br>");
+		echo view('templates/administratorheader');
+		echo view('addproduct');
 		echo view('templates/footer');
 	}
 	//remove product

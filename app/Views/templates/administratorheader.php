@@ -16,7 +16,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#c9ffe5">
       <div class="container">
-  <a class="navbar-brand" href="<?php echo base_url();?>/Administrator"><img src="<?=base_url()?>/assets/images/site/logo.png"></a>
+  <a class="navbar-brand" href="<?php echo base_url();?>/Administrator"><img src="<?=base_url()?>/assets/images/site/logo2_small.png"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
 </button>
@@ -24,7 +24,7 @@
     <ul class="navbar-nav mr-auto">
       
       <li class="nav-item">
-        <a class="nav-link" href="<?php echo base_url();?>/workouts">Products</a>
+        <a class="nav-link" href="<?php echo base_url();?>/viewproducts">Products</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="<?php echo base_url();?>/exercises">Orders</a>

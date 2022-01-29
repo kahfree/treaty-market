@@ -54,6 +54,10 @@ $routes->get('/removeProductFromOrder/(:any)/(:any)','CustomerController::remove
 $routes->match(['get','post'],'/checkout','CustomerController::checkout');
 
 $routes->get('/Administrator', 'AdministratorController::index');
+$routes->get('/viewproducts', 'AdministratorController::viewproducts');
+$routes->match(['get','post'],'/addproduct', 'AdministratorController::addproduct');
+$routes->match(['get','post'],'/editproduct/(:any)', 'AdministratorController::editproduct/$1');
+$routes->match(['get','post'],'/editproduct/', 'AdministratorController::editproduct/');
 
 /*
  * --------------------------------------------------------------------
