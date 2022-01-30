@@ -38,5 +38,18 @@ class OrderModel extends Model {
         return $query;
     }
 
+    public function getOrderCount($customerNumber)
+    {
+        $builder = $this->builder();
+        $query = $builder->getWhere(['customerNumber' => $customerNumber])->getResult();
+        return count($query);
+    }
 
+    public function countForShippingType($customerNumber, $shippingType)
+    {
+        $builder = $this->builder();
+        $constraints = ['customerNumber' => $customerNumber, 'status' => $shippingType];
+        $query = $builder->getWhere($constraints)->getResult();
+        return count($query);
+    }
 }

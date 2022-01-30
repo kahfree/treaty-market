@@ -21,6 +21,8 @@
                     echo ' <li class="list-group-item"><span class="font-weight-bold">Order Date:</span> '.$order->orderDate.'</li>';
                     echo '<li class="list-group-item"><span class="font-weight-bold">Required Date:</span> '.$order->requiredDate.'</li>';
                     echo '<li class="list-group-item"><span class="font-weight-bold">Shipped Date:</span> '.$order->shippedDate.'</li>';
+                    if(session()->get('userType') == 'Administrator')
+                    echo '<li class="list-group-item"><span class="font-weight-bold">Comment: </span><p>'.$order->comments.'</p></li>';
                     echo '</ul>';
                     
                     echo '</div>';

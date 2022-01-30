@@ -129,8 +129,8 @@ class CustomerController extends BaseController
 		$data['order'] = $order;
 		$data['products'] = $products;
 		$data['order_details'] = $orderdetails;
-
-		echo view('templates/customerheader', $data);
+		$whichHeader = 'templates/'.session()->get('userType').'header';
+		echo view($whichHeader, $data);
 		echo view('vieworderdetails');
 		echo view('templates/footer');
 
@@ -143,6 +143,7 @@ class CustomerController extends BaseController
 		$productModel = new ProductModel();
 		$orderModel = new OrderModel();
 		$products = [];
+		$order = $orderModel->getOrder($orderNumber);
 		$orderdetails = $orderDetailsModel->getAllProductsOnOrder($orderNumber);
 		if($this->request->getMethod() == 'post')
 		{
@@ -159,6 +160,13 @@ class CustomerController extends BaseController
 					];
 					$orderDetailsModel->replace($newData);
 				}
+
+				$newOrderData = [
+					'orderNumber' => $orderNumber,
+					'comments' => $this->request->getPost('comment')
+				];
+
+				$orderModel->save($newOrderData);
 			}
 			return redirect()->to('/orderdetails/'.$orderNumber);
 		}
@@ -166,12 +174,13 @@ class CustomerController extends BaseController
 		foreach($orderdetails as $row) {
 			array_push($products,$productModel->getProduct($row->produceCode));
 		}
-		$order = $orderModel->getOrder($orderNumber);
+		
 		$data['order'] = $order;
 		$data['products'] = $products;
 		$data['order_details'] = $orderdetails;
 
-		echo view('templates/customerheader', $data);
+		$whichHeader = 'templates/'.session()->get('userType').'header';
+		echo view($whichHeader, $data);
 		echo view('amendorderdetails');
 		echo view('templates/footer');
 

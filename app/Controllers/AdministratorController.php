@@ -11,6 +11,8 @@ namespace App\Controllers;
 #use App\Models\PostModel;
 #use App\Models\ClientModel;
 use App\Models\ProductModel;
+use App\Models\CustomerModel;
+use App\Models\OrderModel;
 
 class AdministratorController extends BaseController
 {
@@ -84,45 +86,6 @@ class AdministratorController extends BaseController
 		echo view('templates/footer');
 		}
 	}
-	//update existing product?
-	public function updateExercise(){
-		$data = [];
-		helper(['form']);
-		$model = new ExerciseModel();
-		//If the update exercise form was submitted
-		if($this->request->getMethod() == 'post')
-		{
-			$rules = [
-				'exerciseName' => 'required|max_length[45]',
-				'description' => 'required|max_length[500]',
-			];
-
-
-			if(! $this->validate($rules)) {
-				$data['validation'] = $this->validator;
-			}
-			else{
-				//store the new Exercise information in our database
-				$model = new ExerciseModel();
-				$newData = [
-					'ExerciseID' => $this->request->getpost('exid'),
-					'ExName' => $this->request->getpost('exerciseName'),
-					'ExDescription' => $this->request->getPost('description'),
-					'ExGifPath' => $this->request->getPost('gifpath'),
-					'ExNeedsEquipment' => $this->request->getPost('equipment'),
-				];
-				$model->save($newData);
-				$session = session();
-				$session->setFlashdata('success','successfuly Updated');
-			}
-		}
-
-		$data['exercise'] = $model->getExercise($this->request->getPost('exid'));
-
-		echo view('templates/moderatorheader', $data);
-		echo view('editexercise',$data);
-		echo view('templates/footer');
-	}
 	//add new product?
 	public function addproduct(){
 		$data = [];
@@ -182,26 +145,55 @@ class AdministratorController extends BaseController
 		echo view('templates/footer');
 	}
 	//remove product
-	public function removeExercise($exerciseID = null){
-		$model = new ExerciseModel();
-		$model->removeExercise($exerciseID);
+	public function removeproduct($produceCode){
+		$model = new ProductModel();
+		$model->removeProduct($produceCode);
 		$session = session();
-		$session->setFlashData('success','successfully removed exercise from database');
-		return redirect()->to('/exercises');
+		$session->setFlashData('success','successfully removed product from database');
+		return redirect()->to('/viewproducts');
 	}
+
 	//view all customers?
-	public function clients(){
-		$clientModel = new ClientModel();
-		$data['clients'] = $clientModel->getClients();
-		echo view('templates/moderatorheader',$data);
-		echo view('clients');
+	public function allorders(){
+		$customerModel = new CustomerModel();
+		$orderModel = new OrderModel();
+		$data['customers'] = $customerModel->getCustomers()->getResult();
+		$orderlist = []; 
+		$inProcessList = [];
+		$shippedList = [];
+		$disputedList = [];
+		foreach($data['customers'] as $customer){
+			$orderlist[$customer->customerNumber] = $orderModel->getOrderCount($customer->customerNumber);
+			$inProcessList[$customer->customerNumber] = $orderModel->countForShippingType($customer->customerNumber, "In Process");
+			$shippedList[$customer->customerNumber] = $orderModel->countForShippingType($customer->customerNumber, "Shipped");
+			$disputedList[$customer->customerNumber] = $orderModel->countForShippingType($customer->customerNumber, "Disputed");
+		}
+		$data['orders'] = $orderlist;
+		$data['inProcessList'] = $inProcessList;
+		$data['shippedList'] = $shippedList;
+		$data['disputedList'] = $disputedList;
+		echo view('templates/administratorheader',$data);
+		echo view('allorders');
+		echo view('templates/footer');
+	}
+
+	public function customerorders($customerNumber){
+		$data = [];
+		$orderModel = new OrderModel();
+		$customerModel = new CustomerModel();
+		//Get all the orders the customer has made and add to data array
+		$data['customer_orders'] = $orderModel->getAllCustomerOrders($customerNumber);
+		$data['customer'] = $customerModel->getCustomerByID($customerNumber);
+
+		echo view('templates/administratorheader' , $data);
+		echo view('admincustomerorders');
 		echo view('templates/footer');
 	}
 	//view customer orders?
 	public function viewClientPosts($clientID){
 		$postModel = new PostModel();
-		$clientModel = new ClientModel();
-		$data['client'] = $clientModel->getClientById($clientID);
+		$customerModel = new ClientModel();
+		$data['client'] = $customerModel->getClientById($clientID);
 		$data['posts'] = $postModel->getAllPosts($clientID);
 		echo view('templates/moderatorheader',$data);
 		echo view('viewclientposts');

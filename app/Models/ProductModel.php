@@ -32,7 +32,7 @@ class ProductModel extends Model {
     }
 
     //Remove product?
-    public function removeWorkout($produceCode)
+    public function removeProduct($produceCode)
     {
         $builder = $this->builder();
         $query = $builder->where('produceCode', $produceCode)->delete();

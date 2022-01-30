@@ -40,6 +40,15 @@
                         <?= session()->get('success') ?>
                     </div>
                     <?php endif; ?>
+
+                    <?php if(session()->get('userType') == 'Administrator'): ?>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="comment">Order Comment</label>
+                                <textarea name="comment" class="form-control"><?=$order->comments?></textarea>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                     <div class="d-flex">
                         <div class="mr-auto p-2">
                             <button type="submit" class="btn btn-success btn-block">Update</button>
