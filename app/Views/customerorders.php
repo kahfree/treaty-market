@@ -27,7 +27,7 @@ echo '<h1>All of '.session()->get('firstname').'\'s orders</h1>';
                     echo '</div>';
                     echo '<div class="card-body p-2">';
                    
-                    echo '<h6 class="card-text pb-0 mb-0"><a href="'.base_url().'/orderdetails/'.$order->orderNumber.'">View Details</a> <span class="float-right"><a href="">Amend</a></span></h6>';
+                    echo '<h6 class="card-text pb-0 mb-0"><a href="'.base_url().'/orderdetails/'.$order->orderNumber.'">View Details</a> <span class="float-right"><a href="'.base_url().'/amendorderdetails/'.$order->orderNumber.'">Amend</a></span></h6>';
                     echo '</div>';
                     echo '</div>';
                     echo '</div>';

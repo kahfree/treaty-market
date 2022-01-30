@@ -57,6 +57,7 @@
                     echo '<div class="card-header">';
                     echo "<h5 class='card-title'>$row->description</h5>";
                     echo "<p class='card-subtitle'>Supplied by $row->supplier</p>";
+                    echo "<p class='card-subtitle pt-3 font-weight-bold'>Price: €$row->bulkBuyPrice</p>";
                     echo '</div>';
                     echo '<div class="card-body">';
                     echo '<form class="" action="'.base_url().'/addToCart/'.$row->produceCode.'/" method="get">';

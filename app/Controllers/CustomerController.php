@@ -309,6 +309,8 @@ class CustomerController extends BaseController
 		$data = [];
 		helper(['form']);
 		$orderDetailsModel = new OrderDetailsModel();
+		$productModel = new ProductModel();
+		$productDetails = [];
 		if($this->request->getMethod() == 'post')
 		{
 			$session = session();
@@ -326,8 +328,20 @@ class CustomerController extends BaseController
 			}
 		}
 
+		foreach(session()->get('cart') as $produceCode=>$quantity)
+		{
+			$productDetails[$produceCode] = $productModel->getProduct($produceCode);
+		}
+		$total = 0.0;
+		foreach($productDetails as $product){
+			$total += $product->bulkSalePrice;
+		}
+		$data['products'] = $productDetails;
+		$data['subtotal'] = $total;
+		$data['total'] = $total + 6.99;
+
 		echo view('templates/customerheader',$data);
-		echo view('confirmorder');
+		echo view('confirmorder', $data);
 		echo view('templates/footer');
 	}
 	//View wishlist?
@@ -388,6 +402,11 @@ class CustomerController extends BaseController
 		
 	}
 
+	public function createorder()
+	{
+		$orderModel = new OrderModel();
+		$orderDetailsModel = new OrderDetailsModel();
+	}
 	public function completeWorkout($workoutID = null){
 		$data = [];
 		$workoutModel = new WorkoutModel();

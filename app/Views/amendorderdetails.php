@@ -5,7 +5,7 @@
                 <div class="row w-100">
                     <h3><?= $order->orderNumber.'\'s '?>Details</h3>
                     <div class="col-12 col-sm-4">
-                        <button type="submit" class="btn btn-outline-danger btn-sm btn-block  ">Close</button>
+                        <a href="<?=base_url()?>/orderdetails/<?=$order->orderNumber?>" ><button type="submit" class="btn btn-outline-danger btn-sm btn-block  ">Close</button></a>
                     </div>
                     </div>
                 <hr>
