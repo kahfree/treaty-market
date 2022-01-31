@@ -7,6 +7,7 @@ use App\Models\CustomerModel;
 use App\Models\WishlistModel;
 use App\Models\OrderModel;
 use App\Models\OrderDetailsModel;
+use App\Models\PaymentsModel;
 class CustomerController extends BaseController
 {
 
@@ -404,8 +405,74 @@ class CustomerController extends BaseController
 
 	public function createorder()
 	{
+		$data = [];
+		helper(['form']);
+		$paymentsModel = new PaymentsModel();
+		$orderModel = new OrderModel();
+		if($this->request->getMethod() == 'post'){
+
+			$customerModel = new CustomerModel();			
+
+			
+		//Specify validation rules
+		$rules = [
+			
+		];
+
+		//Check if validation specifications are met
+		if(false) {
+			//if not, get the rules vialated and add them to the data array
+			$data['validation'] = $this->validator;
+			print_r($this->validator->listErrors());
+		}
+		else{
+			//if rules are met, create user and store in database
+			//Create new customer$customer row stored as elements in array
+			
+
+			$orderData = [
+				'orderDate' => date("Y-m-d"),
+				'requiredDate' => date("Y-m-d"),
+				'shippedDate' => NULL,
+				'status' => "In Process",
+				'comments' => NULL,
+				'customerNumber' => $customerModel->getCustomerByEmail(session()->get('email'))->customerNumber
+			];
+			print_r($orderData);
+			$cardDetailsData = [
+				'customerNumber' => $customerModel->getCustomerByEmail(session()->get('email'))->customerNumber,
+				'cardType' => 'Visa',
+				'cardNumber' => $this->request->getPost('cardNumber'),
+				'cardName' => $this->request->getPost('cardName'),
+				'expiryDate' => $this->request->getPost('expiryDate'),
+				'CVV' => $this->request->getPost('CVV'),
+				'checkNumber' => '', 
+				'paymentDate' => date("Y-m-d"), 
+				'amount' => '2545', 
+				'orderNumber' => ($orderModel->getLargestOrderNumber()->orderNumber + 1), 
+				'IV' => ''
+			];
+
+			$orderModel->save($orderData);
+			$paymentsModel->save($cardDetailsData);
+			$session = session();
+
+			$session->setFlashdata('success','order successfully made');
+			//return redirect()->to('/Customer');
+		}
+			
+
+			
+			
+		}
 		$orderModel = new OrderModel();
 		$orderDetailsModel = new OrderDetailsModel();
+
+		
+	}
+
+	public function decryptData() {
+		//pain
 	}
 	public function completeWorkout($workoutID = null){
 		$data = [];

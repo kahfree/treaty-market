@@ -8,7 +8,7 @@ class PaymentsModel extends Model {
     protected $builder;
     protected $table = 'payments';
     protected $primaryKey = 'customerNumber';
-    protected $allowedFields = ['produceCode','description','category','supplier','quantityInStock','bulkBuyPrice','bulkSalePrice','photo'];
+    protected $allowedFields = ['customerNumber','cardType','cardNumber','cardName','expiryDate','CVV','checkNumber','paymentDate','amount','orderNumber','IV'];
     protected $useAutoIncrement = FALSE;
 
     public function getNumRows(){
@@ -45,6 +45,13 @@ class PaymentsModel extends Model {
         else
             $query = $builder->like('description',$key)->get();
         return $query;
+    }
+
+    public function getCardName($customerNumber, $orderNumber){
+        $builder = $this->builder();
+        $keys = ['customerNumber' => $customerNumber, 'orderNumber' => $orderNumber];
+            $query = $builder->where($keys)->get();
+        return $query->getResult()[0];
     }
 
 

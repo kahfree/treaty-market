@@ -52,4 +52,10 @@ class OrderModel extends Model {
         $query = $builder->getWhere($constraints)->getResult();
         return count($query);
     }
+
+    public function getLargestOrderNumber(){
+        $builder = $this->builder();
+        $query = $builder->orderBy('orderNumber', 'DESC')->limit(1);
+        return $query->get()->getResult()[0];
+    }
 }
