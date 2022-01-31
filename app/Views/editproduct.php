@@ -52,7 +52,7 @@
                     <div class="col-12">
                         <div class="form-group">
                             <label for="photo">Photo</label>
-                            <!--<input type="file" class="form-control" name="photo" id="photo" value="<?= set_value('photo') ?>">-->
+                            <input type="file" class="form-control" name="photo" id="photo" value="<?= set_value('photo') ?>">
                         </div>
                     </div>
                 
