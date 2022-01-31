@@ -60,17 +60,31 @@ class AdministratorController extends BaseController
 				print_r($this->validator->listErrors());
 			}
 			else{
-				//store the new Exercise information in our database
 				$model = new ProductModel();
 				$newData = [
 					'produceCode' => $this->request->getpost('produceCode'),
 					'category' => $this->request->getpost('category'),
 					'description' => $this->request->getpost('description'),
 					'supplier' => $this->request->getpost('supplier'),
-					'quantity' => $this->request->getpost('quantity'),
+					'quantityInStock' => $this->request->getpost('quantityInStock'),
 					'bulkBuyPrice' => $this->request->getpost('bulkBuyPrice'),
 					'bulkSalePrice' => $this->request->getpost('bulkSalePrice')
 				];
+				if(!empty($_FILES))
+				{
+					$x_file = $this->request->getFile('photo');
+					$image = \Config\Services::image()
+							->withFile($x_file)
+							->resize(345, 186, false, 'height')
+							->save(FCPATH.'assets/images/products/thumbs/'.$x_file->getClientName());
+	
+					$fullSizeImage = \Config\Services::image()
+					->withFile($x_file)
+					->save(FCPATH.'assets/images/products/full/'.$x_file->getClientName());
+					$x_file->move(WRITEPATH.'uploads');
+					$newData['photo'] = $x_file->getClientName();
+				}
+				
 				$model->save($newData);
 				$session = session();
 				$session->setFlashdata('success','successfuly Updated');
@@ -112,6 +126,15 @@ class AdministratorController extends BaseController
 			else{
 				print_r("My data is valid");
 				$x_file = $this->request->getFile('photo');
+            	$image = \Config\Services::image()
+						->withFile($x_file)
+						->resize(345, 186, false, 'height')
+						->save(FCPATH.'assets/images/products/thumbs/'.$x_file->getClientName());
+
+				$fullSizeImage = \Config\Services::image()
+				->withFile($x_file)
+				->save(FCPATH.'assets/images/products/full/'.$x_file->getClientName());
+            	$x_file->move(WRITEPATH.'uploads');
 				$model = new ProductModel();
 				//$x_file->store(FCPATH.'/assets/images/products/full/');
 				$newData = [
@@ -119,20 +142,14 @@ class AdministratorController extends BaseController
 					'category' => $this->request->getpost('category'),
 					'description' => $this->request->getpost('description'),
 					'supplier' => $this->request->getpost('supplier'),
-					'quantity' => $this->request->getpost('quantity'),
+					'quantityInStock' => $this->request->getpost('quantityInStock'),
 					'bulkBuyPrice' => $this->request->getpost('bulkBuyPrice'),
 					'bulkSalePrice' => $this->request->getpost('bulkSalePrice'),
 					'photo' => $x_file->getClientName()
 				];
 				$model->save($newData);
 				
-				$fullImage = \Config\Services::image()
-						->withFile($x_file)
-						->save(FCPATH .'/assets/images/products/full/'. $x_file->getFilename());
-				$thumbImage = \Config\Services::image()
-						->withFile($x_file)
-						->resize(140, 75, false, 'height')
-						->save(FCPATH .'/assets/images/products/thumbs/'. $x_file->getFilename());
+				
 				$session = session();
 				$session->setFlashData('success','successfully added product');
 				return redirect()->to('/viewproducts');
