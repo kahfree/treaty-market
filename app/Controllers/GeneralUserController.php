@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\CustomerModel;
 use App\Models\AdministratorModel;
 use App\Models\ProductModel;
+use App\Models\WishlistModel;
 
 class GeneralUserController extends BaseController
 {
@@ -184,6 +185,8 @@ class GeneralUserController extends BaseController
 		$data = [];
 		helper(['form']);
 		$productModel = new ProductModel();
+		$wishlistModel = new WishlistModel();
+		$customerModel = new CustomerModel();
 		//Determine which header to use depending on the user type
 		if(session()->get('userType'))
 			$whichHeader = strtolower('templates/'.session()->get('userType').'header');
@@ -194,7 +197,6 @@ class GeneralUserController extends BaseController
 		if($produceCode)
 			{
 				$data['selected_product'] = $productModel->getProduct($produceCode);
-				print_r($data['selected_product']);
 				//Display the product details to the user
 				echo view($whichHeader, $data);
 				echo view('viewproduct',$data);
@@ -204,6 +206,13 @@ class GeneralUserController extends BaseController
 		//Otherwise display all the products for the user to choose from
 		else
 			{
+				$customerNumber = $customerModel->getCustomerByEmail(session()->get('email'))->customerNumber;
+				$wishlist = $wishlistModel->getWishlist($customerNumber);
+				$productsOnWishlist = [];
+				foreach($wishlist as $product){
+					array_push($productsOnWishlist,$product->produceCode);
+				}
+				$data['productsOnWishlist'] = $productsOnWishlist;
 				if($this->request->getMethod() == 'post'){
 
 					$result = $productModel->searchProducts($this->request->getPost('key'));

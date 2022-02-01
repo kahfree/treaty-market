@@ -52,7 +52,7 @@ $routes->match(['get','post'],'/amendorderdetails/(:any)','CustomerController::a
 $routes->match(['get','post'],'/addProductToOrder/(:any)/(:any)','CustomerController::addProductToOrder/$1/$2');
 $routes->get('/removeProductFromOrder/(:any)/(:any)','CustomerController::removeProductFromOrder/$1/$2');
 $routes->match(['get','post'],'/checkout','CustomerController::checkout');
-$routes->match(['get','post'],'/createorder','CustomerController::createorder');
+$routes->match(['get','post'],'/createorder/(:any)','CustomerController::createorder/$1');
 $routes->get('/decrypt', 'CustomerController::decryptData');
 
 $routes->get('/Administrator', 'AdministratorController::index');

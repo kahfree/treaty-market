@@ -1,12 +1,20 @@
-<div class="container mx-auto">
-    <h1 class="text-center col-md-12">Product</h1>
-    <a class="col-md-6" href="<?=base_url()?>/browseproducts" ><button type="submit" class="btn btn-outline-danger btn-sm btn-block">Close</button></a>
+<div class="container">
+    <h1 class="text-center col-md-12 mt-3"><?=$selected_product->description?></h1>
             <?php
-                echo '<h2>'.$selected_product->description.'</h2>
-                <img src="'.base_url().'/assets/images/products/full/'.$selected_product->photo.'">'
-                .'<br><h3>Product Info</h3>';
-                    echo '<p>Category: '.$selected_product->category.'</p>';
-                    echo '<p>Supplier: '.$selected_product->supplier.'</p>';
+
+                    echo '<div class="card">';
+                    
+                    echo '<div class="card-header">';
+                    echo "<h5 class='card-title'><span class=''><a href='".base_url().'/browseproducts/'."'><button type='submit' class='btn btn-outline-danger btn-sm btn-block'>Close</button></a></span></h5>";
+                    echo '<ul class="list-group list-group-flush">';
+                    echo ' <li class="list-group-item"><span class="font-weight-bold">Category: </span> '.$selected_product->category.'</li>';
+                    echo '<li class="list-group-item"><span class="font-weight-bold">Supplier: </span> '.$selected_product->supplier.'</li>';
+                    echo '<li class="list-group-item"><span class="font-weight-bold">Price: </span> '.$selected_product->bulkSalePrice.'</li>';
+                    echo '</ul>';
+                    
+                    echo '</div>';
+                    echo '<img class="card-img-bottom img-responsive" src="'.base_url().'/assets/images/products/full/'.$selected_product->photo.'" alt="Card image cap">';
+                    echo '</div>';
                     if(session()->get('userType') == 'Administrator')
                     {
 

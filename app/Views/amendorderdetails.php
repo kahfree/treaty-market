@@ -22,7 +22,7 @@
                     
                 <div class="form-group">
                         <label for="<?='product_'.$products[$i]->produceCode.'_quantity' ?>"><?=$products[$i]->description?></label>
-                        <a href=""<?php echo base_url();?>/removeProductFromOrder/<?= $order->orderNumber?>/<?= $products[$i]->produceCode?>"" class="text-danger"><span class="float-right">Remove</span></a>
+                        <a href="<?php echo base_url();?>/removeProductFromOrder/<?= $order->orderNumber?>/<?= $products[$i]->produceCode?>" class="text-danger"><span class="float-right">Remove</span></a>
                         <input type="number" class="form-control" name="<?='product_'.$products[$i]->produceCode.'_quantity' ?>" id="<?='product_'.$products[$i]->produceCode.'_quantity' ?>" value="<?= set_value('product_'.$products[$i]->produceCode.'_quantity', $order_details[$i]->quantityOrdered) ?>" min="1" max="<?=$products[$i]->quantityInStock ?>">
                     </div>
                 </div>

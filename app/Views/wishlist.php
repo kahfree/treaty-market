@@ -1,9 +1,8 @@
 <div class="mx-auto" style="width:70%">
     <h1 class="text-center"><?php echo session()->get('firstname')?>'s Wishlist</h1>
-    <div class="row justify-content-md-center">
-                <?php if (session()->get('success')): ?>
+    <?php if (session()->get('wishlist-remove')): ?>
                     <div class="alert alert-success col-md-6 offset-3 text-center" role="alert">
-                        <?= session()->get('success') ?>
+                        <?= session()->get('wishlist-remove') ?>
                     </div>
                 <?php endif; ?>
                 <?php if (session()->get('unsuccessful')): ?>
@@ -11,6 +10,8 @@
                         <?= session()->get('unsuccessful') ?>
                     </div>
                 <?php endif; ?>
+    <div class="row justify-content-md-center">
+                
             <form class="" action="<?php echo base_url();?>/checkout" method="post">
             <?php
                echo '<table class="table table-striped col-12">';

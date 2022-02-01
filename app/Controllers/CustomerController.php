@@ -312,6 +312,7 @@ class CustomerController extends BaseController
 		$orderDetailsModel = new OrderDetailsModel();
 		$productModel = new ProductModel();
 		$productDetails = [];
+		$session = session();
 		if($this->request->getMethod() == 'post')
 		{
 			$session = session();
@@ -328,22 +329,27 @@ class CustomerController extends BaseController
 				$_SESSION['cart'][$produceCode] = $quantity;
 			}
 		}
-
+		if($_SESSION['cart']){
 		foreach(session()->get('cart') as $produceCode=>$quantity)
 		{
 			$productDetails[$produceCode] = $productModel->getProduct($produceCode);
 		}
 		$total = 0.0;
 		foreach($productDetails as $product){
-			$total += $product->bulkSalePrice;
+			$total += ($product->bulkSalePrice * $_SESSION['cart'][$product->produceCode]);
 		}
 		$data['products'] = $productDetails;
 		$data['subtotal'] = $total;
 		$data['total'] = $total + 6.99;
-
+	
 		echo view('templates/customerheader',$data);
 		echo view('confirmorder', $data);
 		echo view('templates/footer');
+	}
+	else{
+		$session->setFlashdata('unsuccessful','Cannot checkout empty cart');
+		return redirect()->to('viewCart');
+	}
 	}
 	//View wishlist?
 	public function viewWishlist(){
@@ -383,6 +389,8 @@ class CustomerController extends BaseController
 			];
 			print_r($newData);
 			$model->save($newData);
+			$session = session();
+			$session->setFlashdata('wishlist-add','product successfully added to wishlist');
 		return redirect()->to('/browseproducts');
 		}
 		else{
@@ -398,12 +406,13 @@ class CustomerController extends BaseController
 
 		$wishlistModel->removeWishlistItem($produceCode,$customer->customerNumber);
 		
-
+		$session = session();
+		$session->setFlashdata('wishlist-remove','product successfully removed to wishlist');
 		return redirect()->to('/wishlist');
 		
 	}
 
-	public function createorder()
+	public function createorder($totalAmount)
 	{
 		$data = [];
 		helper(['form']);
@@ -416,14 +425,19 @@ class CustomerController extends BaseController
 			
 		//Specify validation rules
 		$rules = [
-			
+			'cardNumber' => 'numeric|min_length[16]|max_length[16]',
+			'expiryDate' => 'regex_match[/^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/]',
+			'CVV' => 'numeric|min_length[3]|max_length[3]',
 		];
 
 		//Check if validation specifications are met
-		if(false) {
+		if(! $this->validate($rules)) {
 			//if not, get the rules vialated and add them to the data array
 			$data['validation'] = $this->validator;
 			print_r($this->validator->listErrors());
+			$session = session();
+			$session->setFlashdata('error', $this->validator->listErrors());
+			return redirect()->to('/checkout');
 		}
 		else{
 			//if rules are met, create user and store in database
@@ -432,7 +446,7 @@ class CustomerController extends BaseController
 
 			$orderData = [
 				'orderDate' => date("Y-m-d"),
-				'requiredDate' => date("Y-m-d"),
+				'requiredDate' => date("Y-m-d", strtotime('+10 Days')),
 				'shippedDate' => NULL,
 				'status' => "In Process",
 				'comments' => NULL,
@@ -441,24 +455,26 @@ class CustomerController extends BaseController
 			print_r($orderData);
 			$cardDetailsData = [
 				'customerNumber' => $customerModel->getCustomerByEmail(session()->get('email'))->customerNumber,
-				'cardType' => 'Visa',
+				'cardType' => $this->request->getPost('cardType'),
 				'cardNumber' => $this->request->getPost('cardNumber'),
 				'cardName' => $this->request->getPost('cardName'),
 				'expiryDate' => $this->request->getPost('expiryDate'),
 				'CVV' => $this->request->getPost('CVV'),
 				'checkNumber' => '', 
 				'paymentDate' => date("Y-m-d"), 
-				'amount' => '2545', 
+				'amount' => $totalAmount, 
 				'orderNumber' => ($orderModel->getLargestOrderNumber()->orderNumber + 1), 
 				'IV' => ''
 			];
 
 			$orderModel->save($orderData);
-			$paymentsModel->save($cardDetailsData);
+			$paymentsModel->insert($cardDetailsData);
 			$session = session();
 
 			$session->setFlashdata('success','order successfully made');
-			//return redirect()->to('/Customer');
+			$session->remove('cart');
+			$_SESSION['cart'] = [];
+			return redirect()->to('/Customer');
 		}
 			
 
