@@ -17,7 +17,7 @@
                         <?= session()->get('error') ?>
                     </div>
                 <?php endif; ?>
-            <div class="col-xxl-6">
+            <div class="col-md-6 offset-1">
                 <div class="card p-2" style="border-radius: 10px;">
                     <h3 style="text-align: left;">Payment Information</h3>
                     <form style="text-align: left;" class="" action="<?php echo base_url();?>/createorder/<?= $total ?>" method="post">
