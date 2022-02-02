@@ -20,7 +20,7 @@ echo '<h1>Every Customer and Their Orders</h1>';
                     echo '</div>';
                     echo '<div class="card-body p-2">';
                    
-                    echo '<h6 class="card-text pb-0 mb-0"><a href="'.base_url().'/customerorders/'.$customer->customerNumber.'">View Details</a> <span class="float-right"><a href="">Amend</a></span></h6>';
+                    echo '<h5 class="card-text pb-0 mb-0 text-center"><a href="'.base_url().'/customerorders/'.$customer->customerNumber.'"><button class="btn btn-outline-primary btn-block">View Orders</button></a></h5>';
                     echo '</div>';
                     echo '</div>';
                     echo '</div>';

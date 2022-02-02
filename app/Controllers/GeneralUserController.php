@@ -88,6 +88,7 @@ class GeneralUserController extends BaseController
 	public function login(){
 		$data = [];
 		helper(['form']);
+		helper(['cookie']);
 		$session = session();
 		//Object of each usertype is created
 		//This is to check what type the user loggin in is
@@ -105,7 +106,7 @@ class GeneralUserController extends BaseController
 
 			//Check what type the user is
 			$customer = $customerModel->getCustomerByEmail($baseuserEmail);
-			$adminstrator = $administratorModel->getAdministratorByEmail($baseuserEmail);
+			$administrator = $administratorModel->getAdministratorByEmail($baseuserEmail);
 
 			//If the a customer$customer is found using the user's login details, sign them in as a user
 			if($customerModel->validateCustomerLogin($baseuserEmail,$baseuserPassword)){
@@ -120,39 +121,46 @@ class GeneralUserController extends BaseController
 					'email' => $customer->email,
 					'loggedIn' => TRUE,
 					'userType' => 'Customer',
-					'cart' => array()
+					'cart' => array('empty' => 'yeah')
 				];
 
 				//Set the customer's session data
 				$session->set($ses_data);
 
 			}
-			//If a adminstrator is found using the user's login details, sign them in as a adminstrator
+			//If a administrator is found using the user's login details, sign them in as a administrator
 			else if($administratorModel->validateAdminLogin($baseuserEmail,$baseuserPassword)){
 				$session = session();
-				$session->setFlashdata('Administrator','email and password matches adminstrator in database');
+				$session->setFlashdata('Administrator','email and password matches administrator in database');
 			
-				//Create all the session data for adminstrator
+				//Create all the session data for administrator
 				$ses_data = [
-					'adminNumber' => $adminstrator->adminNumber,
-					'firstname' => $adminstrator->firstName,
-					'lastname' => $adminstrator->lastName,
-					'email' => $adminstrator->email,
+					'adminNumber' => $administrator->adminNumber,
+					'firstname' => $administrator->firstName,
+					'lastname' => $administrator->lastName,
+					'email' => $administrator->email,
 					'loggedIn' => TRUE,
 					'userType' => 'Administrator'
 				];
-				//Set adminstrator's session data
+				//Set administrator's session data
 				$session->set($ses_data);
 
 				
 			}
-			//If the user wasn't found in the customer or adminstrator tables
+			//If the user wasn't found in the customer or administrator tables
 			//Let user know their credentials were not found in the database
 			else{
 				$session->setFlashdata('unsuccessful', 'Email or password is incorrect');
 				return redirect()->to('/login');
 			}
 
+			//Check if user wants to save cookies
+			if(isset($_POST['rememberMe'])){
+				if($customer)
+					setcookie("rememberMe",$customer->customerNumber);
+				else if($administrator)
+					setcookie("rememberMe",$administrator);
+			}
 			//Redirect the user to their respective controllers
 			if($session->get('userType') === 'Customer'){
 					return redirect()->to('/Customer');
@@ -163,6 +171,54 @@ class GeneralUserController extends BaseController
 		}
 		//If the form was not submitted, display login page
 		else{
+			//Check if cookie is set, to auto login user
+			if(isset($_COOKIE['rememberMe'])){
+				$customer = $customerModel->getCustomerByID($_COOKIE['rememberMe']);
+				$administrator = $administratorModel->getAdministratorByID($_COOKIE['rememberMe']);
+
+				//If the a customer$customer is found using the user's login details, sign them in as a user
+				if($customer){
+					
+					$session->setFlashdata('Customer','email and password matches customer in database');
+				
+					//Create all the customer's session data
+					$ses_data = [
+						'customerNumber' => $customer->customerNumber,
+						'firstname' => $customer->contactFirstName,
+						'lastname' => $customer->contactLastName,
+						'email' => $customer->email,
+						'loggedIn' => TRUE,
+						'userType' => 'Customer',
+						'cart' => array('empty' => 'yeah'),
+					];
+
+					//Set the customer's session data
+					$session->set($ses_data);
+					return redirect()->to('/Customer');
+
+				}
+				else if($administrator){
+					$session = session();
+					$session->setFlashdata('Administrator','email and password matches administrator in database');
+				
+					//Create all the session data for administrator
+					$ses_data = [
+						'adminNumber' => $administrator->adminNumber,
+						'firstname' => $administrator->firstName,
+						'lastname' => $administrator->lastName,
+						'email' => $administrator->email,
+						'loggedIn' => TRUE,
+						'userType' => 'Administrator'
+					];
+					//Set administrator's session data
+					$session->set($ses_data);
+					return redirect()->to('/Administrator');
+					
+				}
+				else{
+					$session->setFlashdata('unsuccessful', 'Email or password is incorrect');
+				}
+			}
 			echo view('templates/header', $data);
 			echo view('login', $data);
 			echo view('templates/footer');
@@ -175,6 +231,7 @@ class GeneralUserController extends BaseController
 		//Destroy the session of the user
 		$session = session();
 		$session->destroy();
+		setcookie("rememberMe","", time()-3600);
 		//Redirect the user to the login page
 		return redirect()->to('/login');
 	}

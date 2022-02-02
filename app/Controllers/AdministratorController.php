@@ -23,13 +23,14 @@ class AdministratorController extends BaseController
 
 		echo view('templates/administratorheader', $data);
 		echo view('administratorhome');
-		echo view('moderator_3_panels');
+		//echo view('moderator_3_panels');
 		echo view('templates/footer');
 	}
 	//view products?
 	public function viewproducts(){
 		$data = [];
 		$productsModel = new ProductModel();
+		
 		//Get every product in the database
 		$data['product_data'] = $productsModel->listAll()->getResult();
 
@@ -41,7 +42,7 @@ class AdministratorController extends BaseController
 	public function editproduct($productID = null){
 		$data = [];
 		helper(['form']);
-
+		$session = session();
 		if($this->request->getMethod() == 'post')
 		{
 			$rules = [
@@ -70,23 +71,29 @@ class AdministratorController extends BaseController
 					'bulkBuyPrice' => $this->request->getpost('bulkBuyPrice'),
 					'bulkSalePrice' => $this->request->getpost('bulkSalePrice')
 				];
-				if(!empty($_FILES))
-				{
-					$x_file = $this->request->getFile('photo');
-					$image = \Config\Services::image()
-							->withFile($x_file)
-							->resize(345, 186, false, 'height')
-							->save(FCPATH.'assets/images/products/thumbs/'.$x_file->getClientName());
-	
-					$fullSizeImage = \Config\Services::image()
-					->withFile($x_file)
-					->save(FCPATH.'assets/images/products/full/'.$x_file->getClientName());
-					$x_file->move(WRITEPATH.'uploads');
-					$newData['photo'] = $x_file->getClientName();
+				try{
+					if(!empty($_FILES))
+					{
+						$x_file = $this->request->getFile('photo');
+						if(!empty($x_file)){
+						$image = \Config\Services::image()
+								->withFile($x_file)
+								->resize(345, 186, false, 'height')
+								->save(FCPATH.'assets/images/products/thumbs/'.$x_file->getClientName());
+		
+						$fullSizeImage = \Config\Services::image()
+						->withFile($x_file)
+						->save(FCPATH.'assets/images/products/full/'.$x_file->getClientName());
+						$x_file->move(WRITEPATH.'uploads');
+						$newData['photo'] = $x_file->getClientName();
+						}
+					}
 				}
-				
+				catch (\Exception $e){
+					$session->setFlashdata('no-file-upload','no file was uploaded');
+				}
 				$model->save($newData);
-				$session = session();
+				
 				$session->setFlashdata('success','successfuly Updated');
 				return redirect()->to('/viewproducts');
 			}
@@ -164,9 +171,15 @@ class AdministratorController extends BaseController
 	//remove product
 	public function removeproduct($produceCode){
 		$model = new ProductModel();
+		try{
 		$model->removeProduct($produceCode);
 		$session = session();
 		$session->setFlashData('success','successfully removed product from database');
+		}
+		catch(\Exception $e){
+		$session = session();
+		$session->setFlashData('error','can\'t remove product on order');
+		}
 		return redirect()->to('/viewproducts');
 	}
 

@@ -55,7 +55,7 @@
         <a class="nav-link" href="<?php echo base_url();?>/logout">Logout</a>
       </span>
       <span class="nav-item navbar-nav">
-        <a class="nav-link"  data-toggle="tooltip" title="View Cart" href="<?php echo base_url();?>/viewCart"><ion-icon name="cart-sharp" style="font-size:2em;" ></ion-icon>(<?=count(session()->get('cart'))?>)</a>
+        <a class="nav-link"  data-toggle="tooltip" title="View Cart" href="<?php echo base_url();?>/viewcart"><ion-icon name="cart-sharp" style="font-size:2em;" ></ion-icon>(<?=count(session()->get('cart'))?>)</a>
       </span>
     
   </div>

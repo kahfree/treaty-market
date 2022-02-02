@@ -1,6 +1,17 @@
 <div class="container">
 
     <h1>All Products in The Database</h1>
+    <?php if (session()->get('success')): ?>
+                    <div class="alert alert-success col-md-6 offset-3 text-center" role="alert">
+                        <?= session()->get('success') ?>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if (session()->get('error')): ?>
+                    <div class="alert alert-danger col-md-6 offset-3 text-center" role="alert">
+                        <?= session()->get('error') ?>
+                    </div>
+                <?php endif; ?>
     <a href="<?php echo base_url()?>/addproduct"><button class="btn btn-success float-right m-1">Add a Product</button></a>
 <?php
 echo '<table class="table table-striped col-12">';

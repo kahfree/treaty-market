@@ -70,13 +70,13 @@
                         <div class="col-12 col-sm-6">
                             <button type="submit" class="btn btn-primary">Update</button>
                         </div>
-                    
+                        </form>
                     <div class="col-12 col-sm-6 text-right pt-2">
-                        <a href="<?php echo base_url();?>/viewproducts"><button class="btn btn-danger">Cancel</button></a>
+                        <a href="<?php echo base_url();?>/viewproducts" class="btn btn-danger">Cancel</a>
                     </div>
                     </div>
                 </div>
-                </form>
+                
             </div>
         </div>
     </div>

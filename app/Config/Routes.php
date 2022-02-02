@@ -42,7 +42,7 @@ $routes->get('/Customer', 'CustomerController::index');
 $routes->match(['get','post'],'/addToCart/(:any)', 'CustomerController::addToCart/$1');
 $routes->get('/addToCart/(:any)', 'CustomerController::addToCart/$1');
 $routes->get('/removeFromCart/(:any)', 'CustomerController::removeFromCart/$1');
-$routes->get('/viewCart','CustomerController::viewCart');
+$routes->get('/viewcart','CustomerController::viewCart');
 $routes->get('/wishlist','CustomerController::viewWishlist');
 $routes->match(['get','post'],'/addToWishlist/(:any)','CustomerController::addToWishlist/$1');
 $routes->get('/removeFromWishlist/(:any)', 'CustomerController::removeFromWishlist/$1');

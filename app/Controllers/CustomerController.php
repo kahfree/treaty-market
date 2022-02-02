@@ -14,8 +14,12 @@ class CustomerController extends BaseController
     public function index(){
 		$data = [];
 		helper(['form']);
-		//Otherwise display the client dashboard
+		helper(['cookie']);
+		//Otherwise display the customer dashboard
 		echo view('templates/customerheader', $data);
+		if($_COOKIE['deez']){
+			echo 'nice<br>';
+		}
 		echo view('customerhome');
 		//echo view('client_3_panels');
 		echo view('templates/footer');
@@ -291,7 +295,7 @@ class CustomerController extends BaseController
 		$productModel = new ProductModel();
 		$products = [];
 		$quantities = [];
-		if($_SESSION['cart'])
+		if(isset($_SESSION['cart']))
 		{
 			foreach($_SESSION['cart'] as $productID => $quantity)
 			{
@@ -299,6 +303,9 @@ class CustomerController extends BaseController
 				array_push($products,$product);
 				array_push($quantities,$quantity);
 			}
+		}
+		else{
+			$_SESSION['cart'] = array();
 		}
 			$data['products'] = $products;
 			$data['quantities'] = $quantities;
@@ -316,6 +323,7 @@ class CustomerController extends BaseController
 		$productModel = new ProductModel();
 		$productDetails = [];
 		$session = session();
+		try{
 		if($this->request->getMethod() == 'post')
 		{
 			$session = session();
@@ -332,7 +340,8 @@ class CustomerController extends BaseController
 				$_SESSION['cart'][$produceCode] = $quantity;
 			}
 		}
-		if($_SESSION['cart']){
+		
+		if(isset($_SESSION['cart'])){
 		foreach(session()->get('cart') as $produceCode=>$quantity)
 		{
 			$productDetails[$produceCode] = $productModel->getProduct($produceCode);
@@ -344,15 +353,19 @@ class CustomerController extends BaseController
 		$data['products'] = $productDetails;
 		$data['subtotal'] = $total;
 		$data['total'] = $total + 6.99;
-	
+		}
+		else{
+			throw new \Exception('No items in shopping cart');
+		}
+	}
+		catch(\Exception $e){
+			$_SESSION['cart'] = array();
+			$session->setFlashdata('error','you need items to checkout');
+			return redirect()->to('/viewcart');
+		}
 		echo view('templates/customerheader',$data);
 		echo view('confirmorder', $data);
 		echo view('templates/footer');
-	}
-	else{
-		$session->setFlashdata('unsuccessful','Cannot checkout empty cart');
-		return redirect()->to('viewCart');
-	}
 	}
 	//View wishlist?
 	public function viewWishlist(){

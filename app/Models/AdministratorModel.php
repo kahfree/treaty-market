@@ -18,6 +18,12 @@ class AdministratorModel extends Model {
         return $query;
     }
 
+    public function getAdministratorByID($ID){
+        $builder = $this->builder();
+        $query = $builder->getWhere(['adminNumber' => $ID])->getFirstRow();
+        return $query;
+    }
+
     //This method checks if the user's credentials match any row in the table
     public function validateAdminLogin($email,$password){
         $administrator = $this->getAdministratorByEmail($email);

@@ -32,6 +32,10 @@
                         <label for="pass_word">Password</label>
                         <input type="password" class="form-control" name="pass_word" id="pass_word" placeholder="password">
                     </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                        <label class="form-check-label" for="rememberMe">Remember Me</label>
+                    </div>
                 </div>
                 <?php if(isset($validation)): ?>
                     <div class="col-12">
