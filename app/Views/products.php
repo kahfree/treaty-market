@@ -20,11 +20,7 @@
                         <?= session()->get('cart-add') ?>
                     </div>
                 <?php endif; ?>
-                <?php if (session()->get('cart-remove')): ?>
-                    <div class="alert alert-danger col-md-6 offset-3 text-center" role="alert">
-                        <?= session()->get('cart-remove') ?>
-                    </div>
-                <?php endif; ?>
+                
                 <form class="d-flex input-group w-50 offset-3 mb-4 mt-4" action="<?php echo base_url();?>/browseproducts" method="post">
                     <input
                     type="search"

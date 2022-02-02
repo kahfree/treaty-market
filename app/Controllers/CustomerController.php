@@ -263,6 +263,8 @@ class CustomerController extends BaseController
 				else
 					$_SESSION['cart'][$produceCode] = 1;
 			}
+		$session = session();
+		$session->setFlashdata('cart-add','Item successfully added to cart');
 		return redirect()->to('/browseproducts');
 		}
 		else{
@@ -278,6 +280,7 @@ class CustomerController extends BaseController
 		unset($cart[$produceCode]);
 		$session->cart = $cart;
 
+		$session->setFlashdata('cart-remove','Item successfully removed to cart');
 		return redirect()->to('/viewCart');
 		
 	}

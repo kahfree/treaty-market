@@ -17,6 +17,11 @@
                         <?= session()->get('error') ?>
                     </div>
                 <?php endif; ?>
+                <?php if (session()->get('cart-remove')): ?>
+                    <div class="alert alert-success col-md-6 offset-3 text-center" role="alert">
+                        <?= session()->get('cart-remove') ?>
+                    </div>
+                <?php endif; ?>
             <div class="col-md-6 offset-1">
                 <div class="card p-2" style="border-radius: 10px;">
                     <h3 style="text-align: left;">Payment Information</h3>
