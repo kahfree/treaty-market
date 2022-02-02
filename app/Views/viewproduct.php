@@ -2,7 +2,7 @@
     <h1 class="text-center col-md-12 mt-3"><?=$selected_product->description?></h1>
             <?php
 
-                    echo '<div class="card">';
+                    echo '<div class="card col-md-6 offset-3 p-0">';
                     
                     echo '<div class="card-header">';
                     echo "<h5 class='card-title'><span class=''><a href='".base_url().'/browseproducts/'."'><button type='submit' class='btn btn-outline-danger btn-sm btn-block'>Close</button></a></span></h5>";
