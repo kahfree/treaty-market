@@ -25,8 +25,7 @@ class CustomerController extends BaseController
 	public function editProfile(){
 		$data = [];
 		helper(['form']);
-		$model = new ClientModel();
-		$orderModel = new PostModel();
+		$model = new CustomerModel();
 		//If the edit user details form was submitted
 		if($this->request->getMethod() == 'post')
 		{
@@ -52,9 +51,9 @@ class CustomerController extends BaseController
 			}
 
 			//If the client requests to change their password, validate their input
-			if($this->request->getPost('pass_word') != ''){
-				$rules['pass_word'] = 'required|min_length[8]|max_length[255]';
-				$rules['password_confirm'] = 'matches[pass_word]';
+			if($this->request->getPost('password') != ''){
+				$rules['password'] = 'required|min_length[8]|max_length[255]';
+				$rules['passwordconfirm'] = 'matches[password]';
 			}
 
 			//If some validation rules are broken
@@ -64,17 +63,16 @@ class CustomerController extends BaseController
 			}
 			//Otherwise, update the client's details with the new ones
 			else{
-				$model = new ClientModel();
 				//create new row to update with
 				$newData = [
-					'ClientID' => session()->get('clientID'),
-					'Email' => $this->request->getPost('email'),
-					'FirstName' => $this->request->getPost('firstname'),
-					'LastName' => $this->request->getPost('lastname'),
+					'customerNumber' => session()->get('clientID'),
+					'email' => $this->request->getPost('email'),
+					'contactFirstName' => $this->request->getPost('firstname'),
+					'contactLastName' => $this->request->getPost('lastname'),
 				];
 				//If the client requests a password change, add this to the new client row
-				if($this->request->getPost('pass_word') != ''){
-					$newData['ClientPassword'] = hash('ripemd160',$this->request->getPost('pass_word'));
+				if($this->request->getPost('password') != ''){
+					$newData['ClientPassword'] = hash('md5',$this->request->getPost('password'));
 				}
 				//Update the client's details in the database
 				$model->save($newData);
@@ -83,11 +81,11 @@ class CustomerController extends BaseController
 				$session->setFlashdata('success','successfuly Updated');
 				//Reset the client's session email, incase they changed it in the form
 				$session->set('email', $this->request->getPost('email'));
-				return redirect()->to('/profile');
+				return redirect()->to('/editprofile');
 			}
 		}
 		//Get all client details to populate the input fields
-		$data['client'] = $model->getClientByID(session()->get('clientID'));
+		$data['customer'] = $model->getCustomerByEmail(session()->get('customer'));
 		echo view('templates/clientheader', $data);
 		echo view('editprofile');
 		echo view('templates/footer');
