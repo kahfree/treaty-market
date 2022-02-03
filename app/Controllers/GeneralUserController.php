@@ -121,7 +121,7 @@ class GeneralUserController extends BaseController
 					'email' => $customer->email,
 					'loggedIn' => TRUE,
 					'userType' => 'Customer',
-					'cart' => array('empty' => 'yeah')
+					'cart' => array()
 				];
 
 				//Set the customer's session data
@@ -159,7 +159,7 @@ class GeneralUserController extends BaseController
 				if($customer)
 					setcookie("rememberMe",$customer->customerNumber);
 				else if($administrator)
-					setcookie("rememberMe",$administrator);
+					setcookie("rememberMe",$administrator->adminNumber);
 			}
 			//Redirect the user to their respective controllers
 			if($session->get('userType') === 'Customer'){

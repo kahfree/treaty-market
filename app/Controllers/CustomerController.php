@@ -17,9 +17,6 @@ class CustomerController extends BaseController
 		helper(['cookie']);
 		//Otherwise display the customer dashboard
 		echo view('templates/customerheader', $data);
-		if($_COOKIE['deez']){
-			echo 'nice<br>';
-		}
 		echo view('customerhome');
 		//echo view('client_3_panels');
 		echo view('templates/footer');
