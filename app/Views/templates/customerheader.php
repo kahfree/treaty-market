@@ -35,20 +35,18 @@
         <a class="nav-link" href="<?php echo base_url();?>/browseproducts">Browse</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="<?php echo base_url();?>/about">About</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="<?php echo base_url();?>/contact">Contact</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="<?php echo base_url();?>/news">News</a>
-      </li>
-      <li class="nav-item">
         <a class="nav-link" href="<?php echo base_url();?>/orders">Orders</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="<?php echo base_url();?>/wishlist/">Wishlist</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="<?php echo base_url();?>/about">About</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="<?php echo base_url();?>/profile">Profile</a>
+      </li>
+
       </ul>
       
       <span class="nav-item navbar-nav">

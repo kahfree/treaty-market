@@ -35,8 +35,16 @@ class CustomerController extends BaseController
 			{
 				//Don't check for unique email, as it's already known to be unique
 				$rules = [
-					'firstname' => 'required|min_length[3]|max_length[20]',
-					'lastname' => 'required|min_length[3]|max_length[20]',
+					'companyName' => 'required|min_length[3]|max_length[50]',
+					'firstname' => 'required|min_length[3]|max_length[50]',
+					'lastname' => 'required|min_length[3]|max_length[50]',
+					'phoneNumber' => 'required|regex_match[/^[0-9]{10}$/]',
+					'address1' => 'required|min_length[3]|max_length[50]',
+					'address2' => 'max_length[50]',
+					'city' => 'required',
+					'postalCode' => 'max_length[15]',
+					'country' => 'required|min_length[3]|max_length[50]',
+					'address1' => 'required|min_length[3]|max_length[50]',
 					'email' => 'required|min_length[6]|max_length[50]|valid_email'
 				];
 			}
@@ -44,9 +52,17 @@ class CustomerController extends BaseController
 			else
 			{
 				$rules = [
-					'firstname' => 'required|min_length[3]|max_length[20]',
-					'lastname' => 'required|min_length[3]|max_length[20]',
-					'email' => 'required|min_length[6]|max_length[50]|valid_email|is_unique[client.Email]'
+					'companyName' => 'required|min_length[3]|max_length[50]',
+					'firstname' => 'required|min_length[3]|max_length[50]',
+					'lastname' => 'required|min_length[3]|max_length[50]',
+					'phoneNumber' => 'required|regex_match[/^[0-9]{10}$/]',
+					'address1' => 'required|min_length[3]|max_length[50]',
+					'address2' => 'max_length[50]',
+					'city' => 'required',
+					'postalCode' => 'max_length[15]',
+					'country' => 'required|min_length[3]|max_length[50]',
+					'address1' => 'required|min_length[3]|max_length[50]',
+					'email' => 'required|min_length[6]|max_length[50]|valid_email|is_unique[customers.email]'
 				];
 			}
 
@@ -65,14 +81,22 @@ class CustomerController extends BaseController
 			else{
 				//create new row to update with
 				$newData = [
-					'customerNumber' => session()->get('clientID'),
-					'email' => $this->request->getPost('email'),
-					'contactFirstName' => $this->request->getPost('firstname'),
-					'contactLastName' => $this->request->getPost('lastname'),
+					'customerNumber' => session()->get('customerNumber'),
+					'customerName' => $this->request->getVar('companyName'),
+					'contactFirstName' => $this->request->getVar('firstname'),
+					'contactLastName' => $this->request->getVar('lastname'),
+					'phone' => $this->request->getVar('phoneNumber'),
+					'addressLine1' => $this->request->getVar('address1'),
+					'addressLine2' => $this->request->getVar('address2'),
+					'city' => $this->request->getVar('city'),
+					'postalCode' => $this->request->getVar('postalCode'),
+					'country' => $this->request->getVar('country'),
+					'creditLimit' => $this->request->getVar('creditLimit'),
+					'email' => $this->request->getVar('email')
 				];
 				//If the client requests a password change, add this to the new client row
 				if($this->request->getPost('password') != ''){
-					$newData['ClientPassword'] = hash('md5',$this->request->getPost('password'));
+					$newData['password'] = hash('md5',$this->request->getPost('password'));
 				}
 				//Update the client's details in the database
 				$model->save($newData);
@@ -84,23 +108,29 @@ class CustomerController extends BaseController
 				return redirect()->to('/editprofile');
 			}
 		}
-		//Get all client details to populate the input fields
-		$data['customer'] = $model->getCustomerByEmail(session()->get('customer'));
-		echo view('templates/clientheader', $data);
-		echo view('editprofile');
+		//Get all customer details to populate the input fields
+		$data['customer'] = $model->getCustomerByID(session()->get('customerNumber'));
+		echo view('templates/customerheader', $data);
+		echo view('editprofile', $data);
 		echo view('templates/footer');
 	}
     //view order details type function?
 	public function profile(){
 		$data = [];
-		$orderModel = new PostModel();
-		$customerModel = new ClientModel();
-		//Get all the posts the client has made and add to data array
-		$data['client_posts'] = $orderModel->getAllPosts(session()->get('clientID'));
+		helper(['form']);
+		$wishlistmodel = new WishlistModel();
+		$customerModel = new CustomerModel();
+		$productModel = new ProductModel();
+		$wishlist_items = $wishlistmodel->getWishlist(session()->get('customerNumber'));
+		$products = [];
+		foreach($wishlist_items as $item){
+			array_push($products, $productModel->getProduct($item->produceCode));
+		}
+		$data['products'] = $products;
 		//Get the client's details and add to data array
-		$data['client'] = $customerModel->getClientByID(session()->get('clientID'));
-		echo view('templates/clientheader' , $data);
-		echo view('clientprofile');
+		$data['customer'] = $customerModel->getCustomerByID(session()->get('customerNumber'));
+		echo view('templates/customerheader' , $data);
+		echo view('viewprofile');
 		echo view('templates/footer');
 	}
 	public function orders(){

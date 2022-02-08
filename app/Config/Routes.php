@@ -54,7 +54,8 @@ $routes->get('/removeProductFromOrder/(:any)/(:any)','CustomerController::remove
 $routes->match(['get','post'],'/checkout','CustomerController::checkout');
 $routes->match(['get','post'],'/createorder/(:any)','CustomerController::createorder/$1');
 $routes->get('/decrypt', 'CustomerController::decryptData');
-//$routes->match(['get'],['post'],'/editprofile/(:any)','CustomerController::editprofile/$1');
+$routes->get('/profile','CustomerController::profile');
+$routes->match(['get','post'],'/editprofile/','CustomerController::editprofile/');
 
 $routes->get('/Administrator', 'AdministratorController::index');
 $routes->get('/viewproducts', 'AdministratorController::viewproducts');
