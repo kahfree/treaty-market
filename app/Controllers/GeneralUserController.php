@@ -43,9 +43,6 @@ class GeneralUserController extends BaseController
 				'password_confirm' => 'matches[password]',
 			];
 
-			if($this->request->getVar('creditLimit')) {
-				$rules['creditLimit'] = 'regex_match[/^\d+$/]';
-			}
 			//Check if validation specifications are met
 			if(! $this->validate($rules)) {
 				//if not, get the rules vialated and add them to the data array
@@ -65,7 +62,7 @@ class GeneralUserController extends BaseController
 					'city' => $this->request->getVar('city'),
 					'postalCode' => $this->request->getVar('postalCode'),
 					'country' => $this->request->getVar('country'),
-					'creditLimit' => $this->request->getVar('creditLimit'),
+					'creditLimit' => 0,
 					'email' => $this->request->getVar('email'),
 					'password' => hash('md5',$this->request->getVar('password')),
 				];

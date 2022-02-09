@@ -58,13 +58,15 @@ $routes->get('/profile','CustomerController::profile');
 $routes->match(['get','post'],'/editprofile/','CustomerController::editprofile/');
 
 $routes->get('/Administrator', 'AdministratorController::index');
-$routes->get('/viewproducts', 'AdministratorController::viewproducts');
+$routes->match(['get','post'],'/viewproducts', 'AdministratorController::viewproducts');
 $routes->match(['get','post'],'/addproduct', 'AdministratorController::addproduct');
 $routes->match(['get','post'],'/editproduct/(:any)', 'AdministratorController::editproduct/$1');
 $routes->match(['get','post'],'/editproduct/', 'AdministratorController::editproduct/');
 $routes->get('/allorders', 'AdministratorController::allorders');
 $routes->get('/customerorders/(:any)', 'AdministratorController::customerorders/$1');
 $routes->get('/removeproduct/(:any)', 'AdministratorController::removeproduct/$1');
+$routes->get('/allcustomers/', 'AdministratorController::allcustomers/');
+$routes->match(['get','post'],'/editcustomer/(:any)', 'AdministratorController::editcustomer/$1');
 
 
 /*

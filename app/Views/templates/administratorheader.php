@@ -38,16 +38,13 @@
         <a class="nav-link" href="<?php echo base_url();?>/allorders">Orders</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="<?php echo base_url();?>/featured">Customers</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="<?php echo base_url();?>/search">Administrators</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="<?php echo base_url();?>/logout">Logout</a>
+        <a class="nav-link" href="<?php echo base_url();?>/allcustomers">Customers</a>
       </li>
     </ul>
 
+    <span class="nav-item navbar-nav">
+        <a class="nav-link" href="<?php echo base_url();?>/logout">Logout</a>
+    </span>
     
   </div>
 </nav>

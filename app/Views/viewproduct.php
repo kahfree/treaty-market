@@ -5,7 +5,12 @@
                     echo '<div class="card col-md-6 offset-3 p-0">';
                     
                     echo '<div class="card-header">';
-                    echo "<h5 class='card-title'><span class=''><a href='".base_url().'/browseproducts/'."'><button type='submit' class='btn btn-outline-danger btn-sm btn-block'>Close</button></a></span></h5>";
+                    if(session()->get('userType') == 'Customer'){
+                        echo "<h5 class='card-title'><span class=''><a href='".base_url().'/browseproducts/'."'><button type='submit' class='btn btn-outline-danger btn-sm btn-block'>Close</button></a></span></h5>";
+                    }
+                    else if(session()->get('userType') == 'Administrator'){
+                        echo "<h5 class='card-title'><span class=''><a href='".base_url().'/viewproducts/'."'><button type='submit' class='btn btn-outline-danger btn-sm btn-block'>Close</button></a></span></h5>";
+                    }
                     echo '<ul class="list-group list-group-flush">';
                     echo ' <li class="list-group-item"><span class="font-weight-bold">Category: </span> '.$selected_product->category.'</li>';
                     echo '<li class="list-group-item"><span class="font-weight-bold">Supplier: </span> '.$selected_product->supplier.'</li>';

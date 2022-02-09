@@ -29,10 +29,18 @@ class AdministratorController extends BaseController
 	//view products?
 	public function viewproducts(){
 		$data = [];
+		helper(['form']);
 		$productsModel = new ProductModel();
-		
-		//Get every product in the database
-		$data['product_data'] = $productsModel->listAll()->getResult();
+		if($this->request->getMethod() == 'post'){
+
+			$result = $productsModel->searchProducts($this->request->getPost('key'))->getResult();
+			$data['product_data'] = $result;
+			$data['key'] = $this->request->getPost('key');
+		}
+		else{
+			$data['key'] = "";
+			$data['product_data'] = $productsModel->listAll()->getResult();
+		}
 
 		echo view('templates/administratorheader', $data);
 		echo view('viewproducts',$data);
@@ -220,20 +228,109 @@ class AdministratorController extends BaseController
 		echo view('templates/footer');
 	}
 	//view customer orders?
-	public function viewClientPosts($clientID){
-		$postModel = new PostModel();
-		$customerModel = new ClientModel();
-		$data['client'] = $customerModel->getClientById($clientID);
-		$data['posts'] = $postModel->getAllPosts($clientID);
-		echo view('templates/moderatorheader',$data);
-		echo view('viewclientposts');
+
+	//view all customers?
+	public function allcustomers($customerNumber = null){
+		$customerModel = new CustomerModel();
+		$data['customers'] = $customerModel->getCustomers()->getResult();
+
+		echo view('templates/administratorheader',$data);
+		echo view('allcustomers');
 		echo view('templates/footer');
 	}
-	//amend customer order?
-	public function removePost($postID,$clientID){
-		$postmodel = new PostModel();
-		$postmodel->removePost($postID);
-		return redirect()->to('/viewClientPosts/'.$clientID);
+
+	public function editcustomer($customerNumber){
+		$data = [];
+		helper(['form']);
+		$model = new CustomerModel();
+		$data['customer'] = $model->getCustomerByID($customerNumber);
+		//If the edit user details form was submitted
+		if($this->request->getMethod() == 'post')
+		{
+			$rules = [];
+			//If the user hasn't changed their email
+			if($data['customer']->email === $this->request->getPost('email'))
+			{
+				//Don't check for unique email, as it's already known to be unique
+				$rules = [
+					'companyName' => 'required|min_length[3]|max_length[50]',
+					'firstname' => 'required|min_length[3]|max_length[50]',
+					'lastname' => 'required|min_length[3]|max_length[50]',
+					'phoneNumber' => 'required|regex_match[/^[0-9]{10}$/]',
+					'address1' => 'required|min_length[3]|max_length[50]',
+					'address2' => 'max_length[50]',
+					'city' => 'required',
+					'postalCode' => 'max_length[15]',
+					'country' => 'required|min_length[3]|max_length[50]',
+					'address1' => 'required|min_length[3]|max_length[50]',
+					'email' => 'required|min_length[6]|max_length[50]|valid_email'
+				];
+			}
+			//Otherwise, if the client changed their email, check if it's unique in the database
+			else
+			{
+				$rules = [
+					'companyName' => 'required|min_length[3]|max_length[50]',
+					'firstname' => 'required|min_length[3]|max_length[50]',
+					'lastname' => 'required|min_length[3]|max_length[50]',
+					'phoneNumber' => 'required|regex_match[/^[0-9]{10}$/]',
+					'address1' => 'required|min_length[3]|max_length[50]',
+					'address2' => 'max_length[50]',
+					'city' => 'required',
+					'postalCode' => 'max_length[15]',
+					'country' => 'required|min_length[3]|max_length[50]',
+					'address1' => 'required|min_length[3]|max_length[50]',
+					'email' => 'required|min_length[6]|max_length[50]|valid_email|is_unique[customers.email]'
+				];
+			}
+
+			//If the client requests to change their password, validate their input
+			if($this->request->getPost('password') != ''){
+				$rules['password'] = 'required|min_length[8]|max_length[255]';
+				$rules['passwordconfirm'] = 'matches[password]';
+			}
+
+			//If some validation rules are broken
+			if(! $this->validate($rules)) {
+				//Add to validation in data array to display to user
+				$data['validation'] = $this->validator;
+			}
+			//Otherwise, update the client's details with the new ones
+			else{
+				//create new row to update with
+				$newData = [
+					'customerNumber' => $customerNumber,
+					'customerName' => $this->request->getVar('companyName'),
+					'contactFirstName' => $this->request->getVar('firstname'),
+					'contactLastName' => $this->request->getVar('lastname'),
+					'phone' => $this->request->getVar('phoneNumber'),
+					'addressLine1' => $this->request->getVar('address1'),
+					'addressLine2' => $this->request->getVar('address2'),
+					'city' => $this->request->getVar('city'),
+					'postalCode' => $this->request->getVar('postalCode'),
+					'country' => $this->request->getVar('country'),
+					'creditLimit' => $this->request->getVar('creditLimit'),
+					'email' => $this->request->getVar('email')
+				];
+				//If the client requests a password change, add this to the new client row
+				if($this->request->getPost('password') != ''){
+					$newData['password'] = hash('md5',$this->request->getPost('password'));
+				}
+				//Update the client's details in the database
+				$model->save($newData);
+				$session = session();
+				//Set flash data to let user know their details have been updated
+				$session->setFlashdata('success','successfuly Updated');
+				//Reset the client's session email, incase they changed it in the form
+				$session->set('email', $this->request->getPost('email'));
+				return redirect()->to('/allcustomers');
+			}
+		}
+		//Get all customer details to populate the input fields
+		
+		echo view('templates/administratorheader', $data);
+		echo view('viewcustomer', $data);
+		echo view('templates/footer');
 	}
 
 }

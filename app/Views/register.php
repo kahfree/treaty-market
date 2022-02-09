@@ -67,24 +67,19 @@
                             <input type="text" class="form-control" name="country" id="country" value="<?= set_value('country') ?>">
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6">
+                    <div class="col-12 col-sm-7">
                         <div class="form-group">
                             <label for="phoneNumber">Phone Number</label>
                             <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" value="<?= set_value('phoneNumber') ?>">
                         </div>
                     </div>
-                    <div class="col-12 col-sm-3">
+                    <div class="col-12 col-sm-5">
                         <div class="form-group">
                             <label for="postalCode">Postal Code</label>
                             <input type="text" class="form-control" name="postalCode" id="postalCode" value="<?= set_value('postalCode') ?>">
                         </div>
                     </div>
-                    <div class="col-12 col-sm-3">
-                        <div class="form-group">
-                            <label for="creditLimit">Credit Limit</label>
-                            <input type="text" class="form-control" name="creditLimit" id="creditLimit" value="<?= set_value('creditLimit') ?>">
-                        </div>
-                    </div>
+
                     
                 </div>
                 

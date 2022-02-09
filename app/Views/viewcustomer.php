@@ -2,9 +2,9 @@
     <div class="row">
         <div class="col-12 col-sm8 offset-sm-2 col-md-6 offset-md-3 mt-5 pt-3 pb-3 bg-white form-wrapper">
             <div class="container">
-                <h3>Edit Profile</h3>
+                <h3><?=$customer->contactFirstName?>'s Details</h3>
                 <hr>
-                <form class="" action="<?php echo base_url();?>/editprofile" method="post">
+                <form class="" action="<?php echo base_url();?>/editcustomer/<?=$customer->customerNumber?>" method="post">
 
                 <div class="row">
                 <div class="col-12 col-sm-6">
@@ -70,7 +70,7 @@
                     <div class="col-12 col-sm-3">
                         <div class="form-group">
                             <label for="creditLimit">Credit Limit</label>
-                            <input type="text" class="form-control" name="creditLimit" id="creditLimit" value="<?= $customer->creditLimit ?>" readonly>
+                            <input type="text" class="form-control" name="creditLimit" id="creditLimit" value="<?= $customer->creditLimit ?>">
                         </div>
                     </div>
                     <div class="col-12 col-sm-6">
